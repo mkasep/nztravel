@@ -51,6 +51,8 @@ main{max-width:1400px;margin:0 auto;padding:16px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .chip{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
 .chip.w{background:var(--warm-soft)}
+.chip.now{background:var(--surface);border:1px solid var(--line)}
+.chip.fc{background:var(--ok-soft)}
 ul.acts{margin:6px 0 8px;padding-left:18px}
 ul.acts li{margin:2px 0}
 .night{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px;font-size:14px}
@@ -277,7 +279,7 @@ DAYS.forEach((d,i)=>{
   const el=document.createElement("article"); el.className="day"; el.tabIndex=0;
   el.innerHTML=`<div class="dhead"><div class="date">${esc(d.d)}<small>${esc(d.w)} · päev ${i+1}</small></div></div>
    <div class="route">${esc(d.route)}</div>
-   <div class="chips">${d.km?`<span class="chip">🚐 ${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w">${esc(d.wx)}</span></div>
+   <div class="chips">${d.km?`<span class="chip">🚐 ${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w" title="Novembri keskmine">keskm. ${esc(d.wx)}</span><span class="chip now" data-wx="${i}" hidden></span><span class="chip fc" data-fc="${i}" hidden></span></div>
    <ul class="acts">${d.acts.map(a=>`<li>${link(a[0],a[1])}</li>`).join("")}</ul>
    ${d.note?`<div class="note">💡 ${esc(d.note)}</div>`:""}
    ${n?`<div class="night">🌙 ${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${d.nightNote?`<span class="note" style="margin:0">${esc(d.nightNote)}</span>`:""}</div>`:""}`;
@@ -287,6 +289,28 @@ DAYS.forEach((d,i)=>{
   el.addEventListener("keydown",e=>{if(e.key==="Enter") focus();});
   daysEl.appendChild(el);
 });
+
+// live weather (Open-Meteo, no key)
+(function(){
+  const WMO=c=>c===0?"☀️":c<=2?"🌤":c===3?"☁️":c<=48?"🌫":c<=57?"🌦":c<=67?"🌧":c<=77?"🌨":c<=82?"🌧":c<=86?"🌨":"⛈";
+  const pts=DAYS.map(d=>d.night?[d.night[2],d.night[3]]:(d.acts.length?[d.acts[d.acts.length-1][2],d.acts[d.acts.length-1][3]]:null));
+  const keys=[],idx=[];
+  pts.forEach((p,i)=>{if(!p){idx.push(-1);return;} const k=p[0].toFixed(2)+","+p[1].toFixed(2); let j=keys.indexOf(k); if(j<0){keys.push(k);j=keys.length-1;} idx.push(j);});
+  if(!keys.length) return;
+  const lat=keys.map(k=>k.split(",")[0]).join(","), lon=keys.map(k=>k.split(",")[1]).join(",");
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&timezone=auto&forecast_days=16`;
+  fetch(url).then(r=>r.ok?r.json():Promise.reject(r.status)).then(res=>{
+    const arr=Array.isArray(res)?res:[res];
+    DAYS.forEach((d,i)=>{
+      const r=arr[idx[i]]; if(!r) return;
+      const c=r.current, now=document.querySelector(`[data-wx="${i}"]`);
+      if(c&&now){now.textContent=`praegu ${Math.round(c.temperature_2m)}° ${WMO(c.weather_code)} · ${Math.round(c.wind_speed_10m)} km/h`; now.hidden=false;}
+      const [dd,mm]=d.d.split("."), iso=`2026-${mm}-${dd}`, k=r.daily?r.daily.time.indexOf(iso):-1, fc=document.querySelector(`[data-fc="${i}"]`);
+      if(k>=0&&fc){const D=r.daily; fc.textContent=`prognoos ${Math.round(D.temperature_2m_max[k])}° / ${Math.round(D.temperature_2m_min[k])}° ${WMO(D.weather_code[k])} · 💧${D.precipitation_probability_max[k]??"–"}%`; fc.hidden=false;}
+    });
+  }).catch(()=>{});
+})();
+
 
 // tables
 document.getElementById("bronTable").innerHTML="<tr><th>Koht</th><th>Saabumine</th><th>Lahkumine</th><th>Öid</th><th>Staatus</th><th>Märkus</th></tr>"+
