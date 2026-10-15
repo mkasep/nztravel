@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uus-Meremaa 2026</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ec; --surface:#ffffff; --ink:#1d2a2a; --muted:#5f6f6c; --line:#e3ddd0;
+  --accent:#0f6b63; --accent-soft:#d9ece8; --warm:#c8762b; --warm-soft:#f6e6d3;
+  --ok:#2e7d4f; --ok-soft:#dcefe2; --warn:#a86a00; --warn-soft:#fbefd2; --todo:#7b8583; --todo-soft:#ecefee;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121817; --surface:#1a2221; --ink:#e7ecea; --muted:#9aa8a5; --line:#2a3533;
+  --accent:#4fb3a7; --accent-soft:#1d3532; --warm:#e09a55; --warm-soft:#3a2b1c;
+  --ok:#6cc68f; --ok-soft:#1d3326; --warn:#e2b14a; --warn-soft:#3a3018; --todo:#9aa8a5; --todo-soft:#253030;
+  --shadow:none;}}
+:root[data-theme="dark"]{
+  --bg:#121817; --surface:#1a2221; --ink:#e7ecea; --muted:#9aa8a5; --line:#2a3533;
+  --accent:#4fb3a7; --accent-soft:#1d3532; --warm:#e09a55; --warm-soft:#3a2b1c;
+  --ok:#6cc68f; --ok-soft:#1d3326; --warn:#e2b14a; --warn-soft:#3a3018; --todo:#9aa8a5; --todo-soft:#253030; --shadow:none;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
+a{color:var(--accent)}
+header{padding:28px 16px 12px;max-width:1400px;margin:0 auto}
+h1{font-family:Fraunces,Georgia,serif;font-size:clamp(28px,4vw,42px);margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:20px;font-family:Fraunces,Georgia,serif}
+.stat span{color:var(--muted);font-size:13px}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;max-width:1400px;margin:0 auto;padding:0 16px}
+nav.tabs button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;font:inherit;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+main{max-width:1400px;margin:0 auto;padding:16px}
+.panel{display:none}.panel.active{display:block}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
+#map{height:calc(100vh - 40px);position:sticky;top:20px;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);z-index:0}
+@media (max-width:900px){.split{grid-template-columns:1fr}#map{position:relative;top:0;height:46vh;order:-1}}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;transition:border-color .15s}
+.day:hover,.day.sel{border-color:var(--accent)}
+.day.sel{outline:2px solid var(--accent-soft)}
+.dhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.date{font-family:Fraunces,Georgia,serif;font-size:19px}
+.date small{font-family:Inter;color:var(--muted);font-size:13px;margin-left:6px}
+.route{font-weight:600;margin:2px 0 8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chip{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
+.chip.w{background:var(--warm-soft)}
+ul.acts{margin:6px 0 8px;padding-left:18px}
+ul.acts li{margin:2px 0}
+.night{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px;font-size:14px}
+.badge{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:600}
+.b-ok{background:var(--ok-soft);color:var(--ok)} .b-warn{background:var(--warn-soft);color:var(--warn)} .b-todo{background:var(--todo-soft);color:var(--todo)}
+.note{font-size:13px;color:var(--muted);margin-top:6px}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
+th{background:var(--accent-soft);font-weight:600}
+.tablewrap{overflow-x:auto}
+.check li{list-style:none;margin:6px 0;display:flex;gap:10px;align-items:flex-start}
+.check ul{padding:0}
+.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--accent)}
+.check .done label{text-decoration:line-through;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;font-family:Fraunces,Georgia,serif}
+.themebtn{position:fixed;right:14px;bottom:14px;z-index:1000;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer;box-shadow:var(--shadow)}
+.leaflet-popup-content{font:13px/1.4 Inter,sans-serif}
+.pin{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font:600 12px Inter;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 60px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Uus-Meremaa lõunasaar 2026</h1>
+  <p class="sub">12.11 – 01.12.2026 · Mees, Naine ja Laps · Apollo Euro Plus campervan</p>
+  <div class="stats">
+    <div class="stat"><b>15</b><span>päeva vaniga</span></div>
+    <div class="stat"><b id="kmTotal">–</b><span>km sõitu</span></div>
+    <div class="stat"><b>16</b><span>ööd teel</span></div>
+    <div class="stat"><b>~€14 890</b><span>eelarve koos reserviga</span></div>
+  </div>
+</header>
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="kava">🗺️ Kava</button>
+  <button role="tab" aria-selected="false" data-tab="bron">🏕️ Broneeringud</button>
+  <button role="tab" aria-selected="false" data-tab="lennud">✈️ Lennud</button>
+  <button role="tab" aria-selected="false" data-tab="enne">✅ Enne reisi</button>
+  <button role="tab" aria-selected="false" data-tab="info">ℹ️ Kasulik</button>
+</nav>
+<main>
+  <section class="panel active" id="kava">
+    <div class="split">
+      <div id="days"></div>
+      <div id="map" aria-label="Reisikaart"></div>
+    </div>
+  </section>
+  <section class="panel" id="bron"><div class="tablewrap"><table id="bronTable"></table></div>
+    <p class="note">Kontrolli broneerides alati saabumis- <b>ja</b> lahkumiskuupäeva. Mitmeöised peatused: Tekapo, Mt Cook, Te Anau.</p></section>
+  <section class="panel" id="lennud"><div class="tablewrap"><table id="flightTable"></table></div></section>
+  <section class="panel" id="enne"><div class="card check"><h3>Kontrollnimekiri</h3><ul id="checklist"></ul>
+    <p class="note">Linnukesed salvestuvad selles brauseris.</p></div></section>
+  <section class="panel" id="info">
+    <div class="card"><h3>Rakendused ja lingid</h3><ul>
+      <li><a href="https://www.campermate.com" target="_blank" rel="noopener">CamperMate</a> – laagrid, prügilad, vabakämpingu kohad</li>
+      <li><a href="https://bookings.doc.govt.nz" target="_blank" rel="noopener">DOC broneeringud</a> – riiklikud laagrid ja rajad</li>
+      <li><a href="https://www.metservice.com" target="_blank" rel="noopener">MetService</a> – ilm (usaldusväärne ~7–10 päeva ette)</li>
+      <li><a href="https://www.nzta.govt.nz/traffic" target="_blank" rel="noopener">NZTA liiklusinfo</a> – teede sulgemised (Milford Rd, Haast Pass)</li>
+      <li><a href="https://immi.homeaffairs.gov.au" target="_blank" rel="noopener">Austraalia eVisitor (ImmiAccount)</a> · NZeTA: ametlik rakendus „NZeTA”</li>
+    </ul></div>
+    <div class="card"><h3>Meeles pidada</h3><ul>
+      <li>Biokontroll: puhasta matkasaapad, ära too värskeid puuvilju ega mett.</li>
+      <li>UV-indeks 9–11 – SPF 50 ka pilves ilmaga.</li>
+      <li>Sääsed (sandflies) Fiordlandis ja läänerannikul – tõrjevahend käepärast.</li>
+      <li>Vabakämping ainult sertifitseeritud isemajandava vaniga ja lubatud kohtades (trahv NZD 400).</li>
+      <li>Laadi Google Maps offline-kaardid enne Milfordi teed ja läänerannikut.</li>
+    </ul></div>
+  </section>
+</main>
+<footer>Ilmaandmed on pikaajalised keskmised, mitte prognoos · Koordinaadid ligikaudsed · Kaart © OpenStreetMap</footer>
+<button class="themebtn" id="themeBtn" aria-label="Vaheta teemat">🌓</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const DAYS = [
+ {d:"14.11",w:"L",route:"Melbourne → Christchurch",km:0,drive:"takso",wx:"22° / 12° 🌦",
+  acts:[["Melbourne Zoo","https://www.zoo.org.au/melbourne/",-37.7841,144.9515],["Käsipagas hoiule (Stasher/Bounce)","https://stasher.com/luggage-storage/melbourne/melbourne-airport",-37.669,144.841]],
+  note:"Maandumine 07:20 · lend Christchurchi 19:10 → 00:35",
+  night:["Novotel Christchurch Airport","https://www.booking.com/searchresults.html?ss=Novotel+Christchurch+Airport",-43.4886,172.5376,"ok"],nightNote:"Makstud · hommikusöök sees"},
+ {d:"15.11",w:"P",route:"Christchurch → Lake Tekapo",km:240,drive:"3 h",wx:"17° / 4° ☀️",
+  acts:[["Apollo depoo – van kätte ~10:00",gm("Apollo Motorhome Holidays Christchurch"),-43.4855,172.5415],["Geraldine lõunapeatus",gm("Geraldine New Zealand"),-44.0907,171.243],["Good Shepherdi kirik + lupiinid",gm("Church of the Good Shepherd Tekapo"),-44.0046,170.4832]],
+  night:["Lakes Edge Holiday Park","https://holidayparks.co.nz/?p=6263",-44.0047,170.4846,"ok"]},
+ {d:"16.11",w:"E",route:"Lake Tekapo",km:15,drive:"–",wx:"17° / 4° ☀️",
+  acts:[["Mt John Summit ringrada (~2,5 h)",gm("Mt John Summit Track Tekapo"),-43.9853,170.464],["Lake Alexandrina",gm("Lake Alexandrina Tekapo"),-43.955,170.45]],
+  night:["Lakes Edge Holiday Park","https://holidayparks.co.nz/?p=6263",-44.0047,170.4846,"ok"]},
+ {d:"17.11",w:"T",route:"→ Aoraki / Mt Cook",km:105,drive:"1 h 15",wx:"15° / 3° 🌧",
+  acts:[["Hooker Valley Track (10 km, ~3 h)",gm("Hooker Valley Track"),-43.6957,170.0941]],
+  note:"Parkla täitub – ole kohal enne 9:00",
+  night:["Glentanner Park Centre","https://www.mackenzienz.com/visit/glentanner-park-centre",-43.912,170.122,"ok"]},
+ {d:"18.11",w:"K",route:"Aoraki / Mt Cook",km:50,drive:"–",wx:"15° / 3° 🌧",
+  acts:[["Red Tarns Track (~2 h)",gm("Red Tarns Track Mount Cook"),-43.735,170.096],["Tasman Lake vaatepunkt",gm("Tasman Glacier View Track"),-43.689,170.16]],
+  note:"Ilmapuhvri päev",
+  night:["Glentanner Park Centre","https://www.mackenzienz.com/visit/glentanner-park-centre",-43.912,170.122,"ok"]},
+ {d:"19.11",w:"N",route:"→ Wanaka (Lindis Pass)",km:210,drive:"3 h",wx:"19° / 6° ☀️",
+  acts:[["Lindis Pass",gm("Lindis Pass"),-44.588,169.643],["Mt Iron ringrada (1,5 h)",gm("Mt Iron Track Wanaka"),-44.697,169.164]],
+  night:["Wanaka Lakeview Holiday Park","https://hampshireholidayparks.co.nz/?p=4223",-44.697,169.127,"todo"]},
+ {d:"20.11",w:"R",route:"→ Arrowtown (Crown Range)",km:80,drive:"1 h",wx:"18° / 5° 🌤",
+  acts:[["Crown Range vaatepunkt",gm("Crown Range Summit"),-44.884,168.955],["Arrow River Trail rattaga",gm("Arrow River Bridges Trail"),-44.94,168.83]],
+  night:["Arrowtown Holiday Park","https://hampshireholidayparks.co.nz/park/arrowtown-holiday-park/",-44.942,168.834,"todo"]},
+ {d:"21.11",w:"L",route:"→ Te Anau",km:170,drive:"2 h",wx:"16° / 6° 🌧",
+  acts:[["Kepler Track – Brod Bay",gm("Brod Bay Kepler Track"),-45.404,167.675],["Helendavate usside koopad (valikuline)","https://newzealand.com/au/plan/business/te-anau-glowworm-caves-real-journeys",-45.43,167.69]],
+  night:["Te Anau Lakeview Kiwi Holiday Park","https://www.newzealand.com/nz/plan/business/te-anau-lakeview-kiwi-holiday-park-and-motels/",-45.42,167.711,"todo"]},
+ {d:"22.11",w:"P",route:"Milford Sound edasi-tagasi",km:240,drive:"2 × 2 h",wx:"15° / 7° 🌧🌧",
+  acts:[["Mirror Lakes",gm("Mirror Lakes Fiordland"),-45.0466,167.9986],["Key Summit (~3 h)",gm("Key Summit Track The Divide"),-44.827,168.117],["The Chasm",gm("The Chasm Milford"),-44.6763,167.9258],["Milford Soundi laevasõit","https://www.newzealand.com/int/plan/business/milford-sound-coach-and-cruise-from-te-anau-real-journeys/",-44.6695,167.924]],
+  note:"Broneeri hommikune laevasõit; kontrolli SH94 olukorda NZTA-st",
+  night:["Te Anau Lakeview Kiwi Holiday Park","https://www.newzealand.com/nz/plan/business/te-anau-lakeview-kiwi-holiday-park-and-motels/",-45.42,167.711,"todo"]},
+ {d:"23.11",w:"E",route:"→ Wanaka",km:260,drive:"3 h 20",wx:"19° / 6° ☀️",
+  acts:[["Kajak Lake Wanakal (Ruby Island)","https://paddlewanaka34.rezdy.com/729292/double-kayak-hire-walk-in-bookings-available",-44.7,169.135]],
+  night:["Wanaka Lakeview Holiday Park","https://hampshireholidayparks.co.nz/?p=4223",-44.697,169.127,"todo"]},
+ {d:"24.11",w:"T",route:"→ Fox Glacier (Haast Pass)",km:265,drive:"4 h",wx:"16° / 7° 🌧",
+  acts:[["Blue Pools",gm("Blue Pools Track Makarora"),-44.1585,169.2731],["Fantail Falls",gm("Fantail Falls Haast Pass"),-44.0798,169.3746],["Thunder Creek Falls",gm("Thunder Creek Falls"),-44.0617,169.3966]],
+  note:"Reisi pikim sõidupäev",
+  night:["Fox Glacier Top 10","https://top10.co.nz/park/fox-glacier-top-10-holiday-park",-43.463,170.019,"todo"]},
+ {d:"25.11",w:"K",route:"Fox → Franz Josef → Okarito",km:95,drive:"1 h 15",wx:"17° / 8° 🌧",
+  acts:[["Lake Matheson (hommikul)",gm("Lake Matheson"),-43.442,169.964],["Franz Josef Glacier Valley Walk",gm("Franz Josef Glacier Valley Walk"),-43.425,170.183],["Okarito laguun kajakiga","https://www.newzealand.com/in/plan/business/okarito-nature-tours",-43.222,170.165]],
+  night:["Okarito Campground","https://www.rankers.co.nz/experiences/3876-Okarito_Camping_Ground_Okarito_",-43.222,170.162,"warn"],nightNote:"Ei broneerita – kohal enne 15:00"},
+ {d:"26.11",w:"N",route:"→ Hokitika",km:200,drive:"2 h 30",wx:"17° / 9° 🌦",
+  acts:[["Hokitika Gorge",gm("Hokitika Gorge"),-42.956,171.183],["Päikeseloojang rannas",gm("Hokitika Beach"),-42.712,170.962]],
+  night:["Shining Star Beachfront","https://holidayparks.co.nz/?p=6352",-42.706,170.966,"todo"]},
+ {d:"27.11",w:"R",route:"→ Lewis Pass → Hanmer Springs",km:260,drive:"3 h 30",wx:"18° / 6° 🌤",
+  acts:[["Lewis Pass",gm("Lewis Pass"),-42.395,172.4],["Hanmer Springs kuumaveebasseinid","https://ramada-orewa.bookme.co.nz/things-to-do/new-zealand/activity/hanmer-springs-thermal-pools-and-spa-pool-entry/2049",-42.523,172.829]],
+  night:["Hanmer Springs Top 10","https://top10.co.nz/park/hanmer-springs-top-10-holiday-park",-42.518,172.835,"todo"]},
+ {d:"28.11",w:"L",route:"→ Kaikōura",km:130,drive:"1 h 45",wx:"18° / 10° 🌤",
+  acts:[["Point Kean hülgekoloonia",gm("Point Kean Seal Colony Kaikoura"),-42.428,173.711],["Whale Watch Kaikōura","https://rankers.bookme.co.nz/things-to-do/new-zealand/activity/whale-watch-kaikoura/2372",-42.416,173.678]],
+  note:"Vaalaretk pärastlõunal; varuaeg 29.11 hommikul",
+  night:["Kaikōura Top 10","https://holidayparks.co.nz/?p=6249",-42.399,173.68,"todo"]},
+ {d:"29.11",w:"P",route:"→ Christchurch → Melbourne",km:180,drive:"2 h 30",wx:"19° / 8° 🌤",
+  acts:[["Van tagasi ~12:00",gm("Apollo Motorhome Holidays Christchurch"),-43.4855,172.5415],["Lend 18:00 → Melbourne",gm("Christchurch Airport"),-43.4894,172.532],["Õhtusöök mere ääres (Pelicans Landing / Topolino's)",gm("Pelicans Landing Williamstown"),-37.8624,144.9055]],
+  night:["Quest Williamstown / Novotel St Kilda","https://www.booking.com/searchresults.html?ss=Williamstown+Melbourne",-37.8624,144.9055,"todo"]},
+ {d:"30.11",w:"E",route:"Melbourne → Singapur → Helsingi → Tallinn",km:0,drive:"lend",wx:"22° / 12° 🌤",
+  acts:[["Hommikusöök mere ääres",gm("Williamstown Nelson Place cafe"),-37.861,144.9],["Lend 13:10 → TLL 01.12 07:40",gm("Melbourne Airport"),-37.669,144.841]],
+  night:null}
+];
+const BRON = [
+ ["Apollo Euro Plus + Platinum","P 15.11 10:00","P 29.11 12:00","–","warn","Deposiit makstud · jääk + online pre-check-in (hiljemalt 25.10)","https://www.globalwingstravel.co.nz"],
+ ["Novotel Christchurch Airport","L 14.11","P 15.11",1,"ok","Makstud · hommikusöök sees · hiline saabumine teatatud","https://www.booking.com/searchresults.html?ss=Novotel+Christchurch+Airport"],
+ ["Lakes Edge, Tekapo","P 15.11","T 17.11",2,"ok","Pikendatud 15→17 · makse saabumisel · pargis ehitustööd","https://holidayparks.co.nz/?p=6263"],
+ ["Glentanner Park, Mt Cook","T 17.11","N 19.11",2,"ok","Broneeritud","https://www.mackenzienz.com/visit/glentanner-park-centre"],
+ ["Wanaka Lakeview","N 19.11","R 20.11",1,"todo","Broneeri koos 23.11-ga","https://hampshireholidayparks.co.nz/?p=4223"],
+ ["Arrowtown Holiday Park","R 20.11","L 21.11",1,"todo","","https://hampshireholidayparks.co.nz/park/arrowtown-holiday-park/"],
+ ["Te Anau Lakeview Kiwi","L 21.11","E 23.11",2,"todo","","https://www.newzealand.com/nz/plan/business/te-anau-lakeview-kiwi-holiday-park-and-motels/"],
+ ["Wanaka Lakeview","E 23.11","T 24.11",1,"todo","","https://hampshireholidayparks.co.nz/?p=4223"],
+ ["Fox Glacier Top 10","T 24.11","K 25.11",1,"todo","","https://top10.co.nz/park/fox-glacier-top-10-holiday-park"],
+ ["Okarito Campground","K 25.11","N 26.11",1,"warn","Ei broneerita","https://www.rankers.co.nz/experiences/3876-Okarito_Camping_Ground_Okarito_"],
+ ["Shining Star, Hokitika","N 26.11","R 27.11",1,"todo","","https://holidayparks.co.nz/?p=6352"],
+ ["Hanmer Springs Top 10","R 27.11","L 28.11",1,"todo","","https://top10.co.nz/park/hanmer-springs-top-10-holiday-park"],
+ ["Kaikōura Top 10","L 28.11","P 29.11",1,"todo","+ vaalaretk 28.11","https://holidayparks.co.nz/?p=6249"],
+ ["Melbourne (Williamstown / St Kilda)","P 29.11","E 30.11",1,"todo","Tasuta tühistamisega","https://www.booking.com/searchresults.html?ss=Williamstown+Melbourne"],
+ ["Milford Soundi laevasõit","P 22.11","–","–","todo","Hommikune väljumine","https://www.newzealand.com/int/plan/business/milford-sound-coach-and-cruise-from-te-anau-real-journeys/"],
+ ["Okarito kajak","K 25.11","–","–","todo","","https://www.newzealand.com/in/plan/business/okarito-nature-tours"],
+ ["Whale Watch Kaikōura","L 28.11","–","–","todo","Pärastlõunane väljumine","https://rankers.bookme.co.nz/things-to-do/new-zealand/activity/whale-watch-kaikoura/2372"]
+];
+const FLIGHTS = [
+ ["N 12.11","Tallinn 21:10 → Melbourne 07:20 (14.11)","Finnair","25 h 10 min, 1 ümberistumine","ok"],
+ ["L 14.11","Melbourne 19:10 → Christchurch 00:35 (15.11)","Air New Zealand","3 h 25 min","ok"],
+ ["P 29.11","Christchurch 18:00 → Melbourne ~19:45","Air New Zealand","~3 h 45 min","ok"],
+ ["E 30.11","Melbourne 13:10 → Singapur → Helsingi → Tallinn 07:40 (01.12)","Jetstar + Finnair","27 h 30 min; Singapuris T2→T1, 4 h 05","ok"]
+];
+const CHECK = [
+ ["NZeTA + IVL kõigile kolmele (rakendus NZeTA, ~NZD 117/inimene)",0],
+ ["Austraalia eVisitor kõigile kolmele",1],
+ ["Rahvusvaheline juhiluba mõlemale juhile",0],
+ ["Passide kehtivus ≥ märts 2027",0],
+ ["Apollo: deposiit makstud",1],
+ ["Apollo: jäägi makse (arve tulemas)",0],
+ ["Apollo: online pre-check-in (hiljemalt 25.10)",0],
+ ["Finnairi istekohad",1],
+ ["Christchurchi hotell 14.11",1],
+ ["Lakes Edge 15→17.11",1],
+ ["Glentanner Park 17→19.11",1],
+ ["Ülejäänud holiday park'id (Wanaka, Arrowtown, Te Anau, Fox, Hokitika, Hanmer, Kaikōura)",0],
+ ["Milford Soundi laevasõit",0],
+ ["Okarito kajak",0],
+ ["Whale Watch Kaikōura",0],
+ ["Melbourne'i hotell 29.11",0],
+ ["Reisikindlustus kõigile kolmele",0],
+ ["eSIM (NZ + AU) ja pistikuadapter tüüp I",0],
+ ["THL Roadtrip äpp + CamperMate + offline-kaardid",0],
+ ["NZ Traveller Declaration 24 h enne saabumist",0],
+ ["Matkasaapad puhtaks (biokontroll)",0]];
+const BADGE = {ok:["b-ok","✓ Korras"],warn:["b-warn","! Tähelepanu"],todo:["b-todo","○ Broneerimata"]};
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const link = (t,u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`;
+
+// theme
+const root=document.documentElement;
+document.getElementById("themeBtn").onclick=()=>{
+  const dark = root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+};
+// tabs
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===b.dataset.tab));
+  if(b.dataset.tab==="kava") setTimeout(()=>map.invalidateSize(),50);
+});
+
+// stats
+let cum=0; const km=DAYS.reduce((a,d)=>a+d.km,0);
+document.getElementById("kmTotal").textContent=km.toLocaleString("et-EE");
+
+// map
+const map=L.map("map",{scrollWheelZoom:true});
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenStreetMap"}).addTo(map);
+const pin=(c,t)=>L.divIcon({className:"",html:`<div class="pin" style="background:${c}">${t}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
+const dayLayers=[]; const nzPts=[]; const routePts=[];
+DAYS.forEach((d,i)=>{
+  const g=L.featureGroup().addTo(map);
+  d.acts.forEach(a=>{L.marker([a[2],a[3]],{icon:pin("#0f6b63",i+1)}).bindPopup(`<b>${esc(d.d)}</b><br>${link(a[0],a[1])}`).addTo(g); if(a[3]>160) nzPts.push([a[2],a[3]]);});
+  if(d.night){L.marker([d.night[2],d.night[3]],{icon:pin("#c8762b","⌂")}).bindPopup(`<b>Öö ${esc(d.d)}</b><br>${link(d.night[0],d.night[1])}`).addTo(g);
+    if(d.night[3]>160){nzPts.push([d.night[2],d.night[3]]); routePts.push([d.night[2],d.night[3]]);}}
+  dayLayers.push(g);
+});
+routePts.push([-43.4855,172.5415]);
+L.polyline(routePts,{color:"#c8762b",weight:3,opacity:.75,dashArray:"6 6"}).addTo(map);
+const nzBounds=L.latLngBounds(nzPts); map.fitBounds(nzBounds,{padding:[20,20]});
+
+// day cards
+const daysEl=document.getElementById("days");
+DAYS.forEach((d,i)=>{
+  cum+=d.km;
+  const n=d.night;
+  const el=document.createElement("article"); el.className="day"; el.tabIndex=0;
+  el.innerHTML=`<div class="dhead"><div class="date">${esc(d.d)}<small>${esc(d.w)} · päev ${i+1}</small></div></div>
+   <div class="route">${esc(d.route)}</div>
+   <div class="chips">${d.km?`<span class="chip">🚐 ${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w">${esc(d.wx)}</span></div>
+   <ul class="acts">${d.acts.map(a=>`<li>${link(a[0],a[1])}</li>`).join("")}</ul>
+   ${d.note?`<div class="note">💡 ${esc(d.note)}</div>`:""}
+   ${n?`<div class="night">🌙 ${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${d.nightNote?`<span class="note" style="margin:0">${esc(d.nightNote)}</span>`:""}</div>`:""}`;
+  const focus=()=>{document.querySelectorAll(".day").forEach(x=>x.classList.remove("sel")); el.classList.add("sel");
+    map.flyToBounds(dayLayers[i].getBounds(),{padding:[40,40],maxZoom:11,duration:.8});};
+  el.addEventListener("click",e=>{if(e.target.tagName!=="A") focus();});
+  el.addEventListener("keydown",e=>{if(e.key==="Enter") focus();});
+  daysEl.appendChild(el);
+});
+
+// tables
+document.getElementById("bronTable").innerHTML="<tr><th>Koht</th><th>Saabumine</th><th>Lahkumine</th><th>Öid</th><th>Staatus</th><th>Märkus</th></tr>"+
+ BRON.map(r=>`<tr><td>${link(r[0],r[6])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td><span class="badge ${BADGE[r[4]][0]}">${BADGE[r[4]][1]}</span></td><td>${esc(r[5])}</td></tr>`).join("");
+document.getElementById("flightTable").innerHTML="<tr><th>Kuupäev</th><th>Lend</th><th>Lennufirma</th><th>Märkus</th><th>Staatus</th></tr>"+
+ FLIGHTS.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td><span class="badge b-ok">✓ Makstud</span></td></tr>`).join("");
+
+// checklist (localStorage, guarded)
+let saved={}; try{saved=JSON.parse(localStorage.getItem("nz2026check2")||"{}")}catch(e){}
+const cl=document.getElementById("checklist");
+CHECK.forEach(([t,dflt],i)=>{
+  if(saved[i]===undefined) saved[i]=!!dflt;
+  const li=document.createElement("li"); const id="c"+i;
+  li.innerHTML=`<input type="checkbox" id="${id}" ${saved[i]?"checked":""}><label for="${id}">${esc(t)}</label>`;
+  if(saved[i]) li.classList.add("done");
+  li.querySelector("input").onchange=e=>{saved[i]=e.target.checked; li.classList.toggle("done",e.target.checked);
+    try{localStorage.setItem("nz2026check2",JSON.stringify(saved))}catch(err){}};
+  cl.appendChild(li);
+});
+</script>
+</body>
+</html>
