@@ -155,9 +155,9 @@ const photoCache={};
 async function findPhoto(place,ll){
   const t=WIKI[place];
   if(t){try{const r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(t.replace(/ /g,"_")));
-    if(r.ok){const j=await r.json(); if(j.thumbnail) return {src:j.thumbnail.source.replace(/\/\d+px-/,"/480px-"),title:j.title,url:j.content_urls.mobile.page};}}catch(e){}}
+    if(r.ok){const j=await r.json(); if(j.thumbnail) return {src:j.thumbnail.source,title:j.title,url:j.content_urls.mobile.page,orig:j.originalimage&&j.originalimage.source};}}catch(e){}}
   try{const [la,lo]=ll.split(",");
-    const r=await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=geosearch&ggscoord=${la}|${lo}&ggsradius=10000&ggslimit=10&prop=pageimages|info&inprop=url&piprop=thumbnail&pithumbsize=480`);
+    const r=await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=geosearch&ggscoord=${la}|${lo}&ggsradius=10000&ggslimit=10&prop=pageimages|info&inprop=url&piprop=thumbnail&pithumbsize=500`);
     const j=await r.json(); const ps=Object.values((j.query||{}).pages||{}).filter(p=>p.thumbnail).sort((a,b)=>a.index-b.index);
     if(ps[0]) return {src:ps[0].thumbnail.source,title:ps[0].title,url:ps[0].fullurl};}catch(e){}
   return null;
@@ -171,7 +171,9 @@ async function photo(e){
   const p=photoCache[k];
   const out=p?`<a href="${esc(p.url)}" target="_blank" rel="noopener"><img src="${esc(p.src)}" alt="${esc(p.title)}"></a><div class="cap">📷 Wikipedia · ${esc(p.title)}</div>`:"";
   pop.setContent(html.replace(ph,out));
-  const img=pop.getElement()&&pop.getElement().querySelector(".pop img"); if(img) img.addEventListener("load",()=>pop.update());
+  const img=pop.getElement()&&pop.getElement().querySelector(".pop img");
+  if(img){img.addEventListener("load",()=>pop.update());
+    img.addEventListener("error",()=>{const o=p.orig; if(o&&img.src!==o){img.src=o;} else {img.closest("a").remove(); pop.update();}});}
 }
 const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 const DAYS = [
