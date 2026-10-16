@@ -74,6 +74,9 @@ th{background:var(--accent-soft);font-weight:600}
 .pop img{display:block;width:240px;max-width:100%;height:150px;object-fit:cover;border-radius:8px;margin:6px 0 2px;background:var(--line)}
 .pop .cap{font-size:11px;color:#7b8583}
 .pin{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font:600 12px Inter;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.bar{height:14px;border-radius:999px;background:var(--line);overflow:hidden;margin:6px 0}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+td.num,th.num{text-align:right;white-space:nowrap}
 footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 60px}
 </style>
 </head>
@@ -86,12 +89,14 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
     <div class="stat"><b id="kmTotal">–</b><span>km sõitu</span></div>
     <div class="stat"><b>16</b><span>ööd teel</span></div>
     <div class="stat"><b>~€14 890</b><span>eelarve koos reserviga</span></div>
+    <div class="stat"><b id="paidTotal">–</b><span>juba makstud</span></div>
   </div>
 </header>
 <nav class="tabs" role="tablist">
   <button role="tab" aria-selected="true" data-tab="kava">🗺️ Kava</button>
   <button role="tab" aria-selected="false" data-tab="bron">🏕️ Broneeringud</button>
   <button role="tab" aria-selected="false" data-tab="lennud">✈️ Lennud</button>
+  <button role="tab" aria-selected="false" data-tab="kulud">💶 Kulud</button>
   <button role="tab" aria-selected="false" data-tab="enne">✅ Enne reisi</button>
   <button role="tab" aria-selected="false" data-tab="info">ℹ️ Kasulik</button>
 </nav>
@@ -105,6 +110,13 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
   <section class="panel" id="bron"><div class="tablewrap"><table id="bronTable"></table></div>
     <p class="note">Kontrolli broneerides alati saabumis- <b>ja</b> lahkumiskuupäeva. Mitmeöised peatused: Tekapo, Mt Cook, Te Anau.</p></section>
   <section class="panel" id="lennud"><div class="tablewrap"><table id="flightTable"></table></div></section>
+  <section class="panel" id="kulud">
+    <div class="card"><h3>Eelarve seis</h3>
+      <div class="bar" role="img" id="paidBar"><span></span></div>
+      <p class="note" id="paidLine"></p></div>
+    <div class="tablewrap"><table id="paidTable"></table></div>
+    <div class="card" style="margin-top:14px"><h3>Teada tulevased maksed</h3><ul id="dueList"></ul></div>
+  </section>
   <section class="panel" id="enne"><div class="card check"><h3>Kontrollnimekiri</h3><ul id="checklist"></ul>
     <p class="note">Linnukesed salvestuvad selles brauseris.</p></div></section>
   <section class="panel" id="info">
@@ -364,6 +376,30 @@ CHECK.forEach(([t,dflt],i)=>{
     try{localStorage.setItem("nz2026check2",JSON.stringify(saved))}catch(err){}};
   cl.appendChild(li);
 });
+
+// paid so far (LHV statement 16.10.2026)
+const BUDGET=14890;
+const PAID=[
+ ["11.10","Finnair","Piletid TLL–MEL–TLL (2 täisk. + laps)","Lennud",3861.98],
+ ["11.10","Finnair","Istekohad 3 × €63 + 3 × €98","Lennud",483],
+ ["12.10","Air New Zealand","MEL–CHC–MEL, 3 inimest (NZD 3 864,86)","Lennud",1945.21],
+ ["15.10","Global Wings (Apollo)","Campervani deposiit","Camper",559],
+ ["15.10","Novotel CHC Airport","Hotell 14→15.11 (NZD 504,45)","Majutus",255.68],
+ ["15.10","Glentanner Park","2 ööd 17→19.11 (NZD 109,65)","Majutus",55.57]];
+const DUE=[["Apollo jääk","~€2 800","enne 25.10"],["Lakes Edge, 2 ööd","~€75","saabumisel 15.11"]];
+const eur=v=>"€"+v.toLocaleString("et-EE",{minimumFractionDigits:2,maximumFractionDigits:2});
+const paidSum=PAID.reduce((a,r)=>a+r[4],0);
+document.getElementById("paidTotal").textContent="€"+Math.round(paidSum).toLocaleString("et-EE");
+const pct=Math.round(paidSum/BUDGET*100);
+document.querySelector("#paidBar span").style.width=pct+"%";
+document.getElementById("paidBar").setAttribute("aria-label",`Makstud ${pct}% eelarvest`);
+document.getElementById("paidLine").textContent=`Makstud ${eur(paidSum)} · ${pct}% eelarvest (~€${BUDGET.toLocaleString("et-EE")}) · veel ~€${Math.round(BUDGET-paidSum).toLocaleString("et-EE")}`;
+const cats={}; PAID.forEach(r=>cats[r[3]]=(cats[r[3]]||0)+r[4]);
+document.getElementById("paidTable").innerHTML='<tr><th>Kuupäev</th><th>Saaja</th><th>Mille eest</th><th>Kategooria</th><th class="num">EUR</th></tr>'+
+ PAID.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="num">${eur(r[4])}</td></tr>`).join("")+
+ Object.entries(cats).map(([k,v])=>`<tr><td></td><td></td><td></td><td><i>${esc(k)}</i></td><td class="num"><i>${eur(v)}</i></td></tr>`).join("")+
+ `<tr><th colspan="4">Kokku makstud</th><th class="num">${eur(paidSum)}</th></tr>`;
+document.getElementById("dueList").innerHTML=DUE.map(d=>`<li><b>${esc(d[0])}</b> – ${esc(d[1])} · ${esc(d[2])}</li>`).join("");
 </script>
 </body>
 </html>
