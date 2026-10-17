@@ -88,7 +88,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
     <div class="stat"><b>15</b><span>päeva vaniga</span></div>
     <div class="stat"><b id="kmTotal">–</b><span>km sõitu</span></div>
     <div class="stat"><b>16</b><span>ööd teel</span></div>
-    <div class="stat"><b>~€14 890</b><span>eelarve koos reserviga</span></div>
+    <div class="stat"><b>~€14 930</b><span>eelarve koos reserviga</span></div>
     <div class="stat"><b id="paidTotal">–</b><span>juba makstud</span></div>
   </div>
 </header>
@@ -239,7 +239,7 @@ const DAYS = [
   night:null}
 ];
 const BRON = [
- ["Apollo Euro Plus + Platinum","P 15.11 10:00","P 29.11 12:00","–","warn","Deposiit makstud · jääk + online pre-check-in (hiljemalt 25.10)","https://www.globalwingstravel.co.nz"],
+ ["Apollo Euro Plus + Platinum","P 15.11 10:00","P 29.11 12:00","–","ok","Täielikult makstud · online pre-check-in hiljemalt 25.10","https://www.globalwingstravel.co.nz"],
  ["Novotel Christchurch Airport","L 14.11","P 15.11",1,"ok","Makstud · hommikusöök sees · hiline saabumine teatatud","https://www.booking.com/searchresults.html?ss=Novotel+Christchurch+Airport"],
  ["Lakes Edge, Tekapo","P 15.11","T 17.11",2,"ok","Pikendatud 15→17 · makse saabumisel · pargis ehitustööd","https://holidayparks.co.nz/?p=6263"],
  ["Glentanner Park, Mt Cook","T 17.11","N 19.11",2,"ok","Broneeritud","https://www.mackenzienz.com/visit/glentanner-park-centre"],
@@ -263,12 +263,12 @@ const FLIGHTS = [
  ["E 30.11","Melbourne 13:10 → Singapur → Helsingi → Tallinn 07:40 (01.12)","Jetstar + Finnair","27 h 30 min; Singapuris T2→T1, 4 h 05","ok"]
 ];
 const CHECK = [
- ["NZeTA + IVL kõigile kolmele (rakendus NZeTA, ~NZD 117/inimene)",0],
+ ["NZeTA + IVL – 2 makstud 17.10, kontrolli kolmandat",0],
  ["Austraalia eVisitor kõigile kolmele",1],
  ["Rahvusvaheline juhiluba mõlemale juhile",0],
  ["Passide kehtivus ≥ märts 2027",0],
  ["Apollo: deposiit makstud",1],
- ["Apollo: jäägi makse (arve tulemas)",0],
+ ["Apollo: jääk makstud (enammakse €559 tagastus ootel)",1],
  ["Apollo: online pre-check-in (hiljemalt 25.10)",0],
  ["Finnairi istekohad",1],
  ["Christchurchi hotell 14.11",1],
@@ -385,15 +385,18 @@ CHECK.forEach(([t,dflt],i)=>{
 });
 
 // paid so far (LHV statement 16.10.2026)
-const BUDGET=14890;
+const BUDGET=14930;
 const PAID=[
  ["11.10","Finnair","Piletid TLL–MEL–TLL (2 täisk. + laps)","Lennud",3861.98],
  ["11.10","Finnair","Istekohad 3 × €63 + 3 × €98","Lennud",483],
  ["12.10","Air New Zealand","MEL–CHC–MEL, 3 inimest (NZD 3 864,86)","Lennud",1945.21],
  ["15.10","Global Wings (Apollo)","Campervani deposiit","Camper",559],
+ ["16.10","Global Wings (Apollo)","Lõppmakse (ekslikult kogusumma)","Camper",3408.99],
+ ["ootel","Global Wings (Apollo)","Enammakse tagastus","Camper",-559],
+ ["17.10","NZeTA","NZeTA + IVL, 2 inimest (NZD 234)","Dokumendid",118.65],
  ["15.10","Novotel CHC Airport","Hotell 14→15.11 (NZD 504,45)","Majutus",255.68],
  ["15.10","Glentanner Park","2 ööd 17→19.11 (NZD 109,65)","Majutus",55.57]];
-const DUE=[["Apollo jääk","~€2 800","enne 25.10"],["Lakes Edge, 2 ööd","~€75","saabumisel 15.11"]];
+const DUE=[["Global Wings tagastab enammakse","+€559","ootel"],["NZeTA + IVL, kolmas inimene (kui veel tegemata)","~€59","enne lendu"],["Lakes Edge, 2 ööd","~€75","saabumisel 15.11"]];
 const eur=v=>"€"+v.toLocaleString("et-EE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const paidSum=PAID.reduce((a,r)=>a+r[4],0);
 document.getElementById("paidTotal").textContent="€"+Math.round(paidSum).toLocaleString("et-EE");
