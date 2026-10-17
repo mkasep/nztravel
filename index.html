@@ -77,6 +77,16 @@ th{background:var(--accent-soft);font-weight:600}
 .bar{height:14px;border-radius:999px;background:var(--line);overflow:hidden;margin:6px 0}
 .bar span{display:block;height:100%;background:var(--accent);border-radius:999px}
 td.num,th.num{text-align:right;white-space:nowrap}
+.day.today,.nightc.today{border-color:var(--warm);box-shadow:0 0 0 3px var(--warm-soft)}
+.pill{display:inline-block;font:600 11.5px Inter,sans-serif;padding:2px 8px;border-radius:999px;background:var(--warm);color:#fff;margin-left:6px;vertical-align:middle}
+.nights{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.nightc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.nightc.past{opacity:.55}
+.nightc .when{font-family:Fraunces,Georgia,serif;font-size:18px}
+.nightc .when small{font-family:Inter;color:var(--muted);font-size:13px;margin-left:6px}
+.nightc .place{font-weight:600;margin:4px 0 8px}
+.nightc .acts2{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{display:inline-block;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--bg)}
 footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 60px}
 </style>
 </head>
@@ -94,6 +104,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
 </header>
 <nav class="tabs" role="tablist">
   <button role="tab" aria-selected="true" data-tab="kava">🗺️ Kava</button>
+  <button role="tab" aria-selected="false" data-tab="oo">🛏️ Ööbimine</button>
   <button role="tab" aria-selected="false" data-tab="bron">🏕️ Broneeringud</button>
   <button role="tab" aria-selected="false" data-tab="lennud">✈️ Lennud</button>
   <button role="tab" aria-selected="false" data-tab="kulud">💶 Kulud</button>
@@ -107,6 +118,8 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
       <div id="map" aria-label="Reisikaart"></div>
     </div>
   </section>
+  <section class="panel" id="oo"><div id="nights" class="nights"></div>
+    <p class="note">🧭 avab Google Mapsi navigeerimise otse ööbimiskohta.</p></section>
   <section class="panel" id="bron"><div class="tablewrap"><table id="bronTable"></table></div>
     <p class="note">Kontrolli broneerides alati saabumis- <b>ja</b> lahkumiskuupäeva. Mitmeöised peatused: Tekapo, Mt Cook, Te Anau.</p></section>
   <section class="panel" id="lennud"><div class="tablewrap"><table id="flightTable"></table></div></section>
@@ -324,13 +337,19 @@ routePts.push([-43.4855,172.5415]);
 L.polyline(routePts,{color:"#c8762b",weight:3,opacity:.75,dashArray:"6 6"}).addTo(map);
 const nzBounds=L.latLngBounds(nzPts); map.fitBounds(nzBounds,{padding:[20,20]});
 
+// today (device local date; ?paev=19.11 for testing)
+const TODAY=(()=>{try{const q=new URLSearchParams(location.search).get("paev"); if(q) return q;}catch(e){}
+  const n=new Date(); return String(n.getDate()).padStart(2,"0")+"."+String(n.getMonth()+1).padStart(2,"0");})();
+const TRIPYEAR=2026;
+const dayDate=d=>{const [dd,mm]=d.split(".").map(Number); return new Date(TRIPYEAR,mm-1,dd);};
+const todayDate=(()=>{const [dd,mm]=TODAY.split(".").map(Number); return new Date(TRIPYEAR,mm-1,dd);})();
 // day cards
 const daysEl=document.getElementById("days");
 DAYS.forEach((d,i)=>{
   cum+=d.km;
   const n=d.night;
-  const el=document.createElement("article"); el.className="day"; el.tabIndex=0;
-  el.innerHTML=`<div class="dhead"><div class="date">${esc(d.d)}<small>${esc(d.w)} · päev ${i+1}</small></div></div>
+  const el=document.createElement("article"); el.className="day"+(d.d===TODAY?" today":""); el.tabIndex=0; el.id="day-"+d.d;
+  el.innerHTML=`<div class="dhead"><div class="date">${esc(d.d)}<small>${esc(d.w)} · päev ${i+1}</small>${d.d===TODAY?'<span class="pill">Täna</span>':""}</div></div>
    <div class="route">${esc(d.route)}</div>
    <div class="chips">${d.km?`<span class="chip">🚐 ${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w" title="Novembri keskmine">keskm. ${esc(d.wx)}</span><span class="chip now" data-wx="${i}" hidden></span><span class="chip fc" data-fc="${i}" hidden></span></div>
    <ul class="acts">${d.acts.map(a=>`<li>${link(a[0],a[1])}</li>`).join("")}</ul>
@@ -410,6 +429,34 @@ document.getElementById("paidTable").innerHTML='<tr><th>Kuupäev</th><th>Saaja</
  Object.entries(cats).map(([k,v])=>`<tr><td></td><td></td><td></td><td><i>${esc(k)}</i></td><td class="num"><i>${eur(v)}</i></td></tr>`).join("")+
  `<tr><th colspan="4">Kokku makstud</th><th class="num">${eur(paidSum)}</th></tr>`;
 document.getElementById("dueList").innerHTML=DUE.map(d=>`<li><b>${esc(d[0])}</b> – ${esc(d[1])} · ${esc(d[2])}</li>`).join("");
+
+// nights tab
+(function(){
+  const box=document.getElementById("nights"); if(!box) return;
+  const WD=["P","E","T","K","N","R","L"];
+  DAYS.forEach((d,i)=>{
+    const n=d.night; if(!n) return;
+    const dt=dayDate(d.d), nx=new Date(dt); nx.setDate(nx.getDate()+1);
+    const out=String(nx.getDate()).padStart(2,"0")+"."+String(nx.getMonth()+1).padStart(2,"0");
+    const prev=DAYS[i-1], same=prev&&prev.night&&prev.night[0]===n[0];
+    const isToday=d.d===TODAY, past=dt<todayDate&&!isToday;
+    const c=document.createElement("article"); c.className="nightc"+(isToday?" today":"")+(past?" past":""); c.id="night-"+d.d;
+    c.innerHTML=`<div class="when">${esc(d.d)} → ${esc(out)}<small>${esc(d.w)}–${WD[nx.getDay()]} · öö ${i+1}</small>${isToday?'<span class="pill">Täna öö</span>':""}</div>
+      <div class="place">${esc(n[0])}</div>
+      <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${same?' <span class="note" style="margin:0">· sama koht mis eelmisel ööl</span>':""}
+      ${d.nightNote?`<div class="note">${esc(d.nightNote)}</div>`:""}
+      <div class="acts2"><a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${n[2]},${n[3]}" target="_blank" rel="noopener">🧭 Navigeeri</a>${n[1]?`<a class="btn" href="${esc(n[1])}" target="_blank" rel="noopener">🔗 Koduleht</a>`:""}<a class="btn" href="#" data-goto="${esc(d.d)}">🗺️ Päev kaardil</a></div>`;
+    box.appendChild(c);
+  });
+  box.addEventListener("click",e=>{const g=e.target.closest("[data-goto]"); if(!g) return; e.preventDefault();
+    document.querySelector('nav.tabs button[data-tab="kava"]').click();
+    const el=document.getElementById("day-"+g.dataset.goto); if(el){setTimeout(()=>{el.scrollIntoView({behavior:"smooth",block:"center"}); el.click();},120);}});
+  // scroll today into view on load
+  const t=document.getElementById("day-"+TODAY);
+  if(t) setTimeout(()=>{t.scrollIntoView({block:"center"}); t.click();},400);
+  document.querySelectorAll('nav.tabs button[data-tab="oo"]').forEach(b=>b.addEventListener("click",()=>{
+    const tn=document.getElementById("night-"+TODAY); if(tn) setTimeout(()=>tn.scrollIntoView({behavior:"smooth",block:"center"}),60);}));
+})();
 </script>
 </body>
 </html>
