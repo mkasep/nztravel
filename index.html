@@ -263,7 +263,7 @@ const FLIGHTS = [
  ["E 30.11","Melbourne 13:10 → Singapur → Helsingi → Tallinn 07:40 (01.12)","Jetstar + Finnair","27 h 30 min; Singapuris T2→T1, 4 h 05","ok"]
 ];
 const CHECK = [
- ["NZeTA + IVL – 2 makstud 17.10, kontrolli kolmandat",0],
+ ["NZeTA + IVL: laps ✓, naine ootel, mees – vana kehtib (kontrolli kehtivust)",1],
  ["Austraalia eVisitor kõigile kolmele",1],
  ["Rahvusvaheline juhiluba mõlemale juhile",0],
  ["Passide kehtivus ≥ märts 2027",0],
@@ -396,7 +396,7 @@ const PAID=[
  ["17.10","NZeTA","NZeTA + IVL, 2 inimest (NZD 234)","Dokumendid",118.65],
  ["15.10","Novotel CHC Airport","Hotell 14→15.11 (NZD 504,45)","Majutus",255.68],
  ["15.10","Glentanner Park","2 ööd 17→19.11 (NZD 109,65)","Majutus",55.57]];
-const DUE=[["Global Wings tagastab enammakse","+€559","ootel"],["NZeTA + IVL, kolmas inimene (kui veel tegemata)","~€59","enne lendu"],["Lakes Edge, 2 ööd","~€75","saabumisel 15.11"]];
+const DUE=[["Global Wings tagastab enammakse","+€559","ootel"],["Lakes Edge, 2 ööd","~€75","saabumisel 15.11"]];
 const eur=v=>"€"+v.toLocaleString("et-EE",{minimumFractionDigits:2,maximumFractionDigits:2});
 const paidSum=PAID.reduce((a,r)=>a+r[4],0);
 document.getElementById("paidTotal").textContent="€"+Math.round(paidSum).toLocaleString("et-EE");
