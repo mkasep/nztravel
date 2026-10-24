@@ -126,6 +126,8 @@ td.num,th.num{text-align:right;white-space:nowrap}
 .nightc .acts2{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .btn{display:inline-block;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--bg)}
 footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 60px}
+.pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;align-items:start}
+.pk-grid .card{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -147,6 +149,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
   <button role="tab" aria-selected="false" data-tab="lennud">✈️ Lennud</button>
   <button role="tab" aria-selected="false" data-tab="kulud">💶 Kulud</button>
   <button role="tab" aria-selected="false" data-tab="enne">✅ Enne reisi</button>
+  <button role="tab" aria-selected="false" data-tab="pakk">🧳 Pakkimine</button>
   <button role="tab" aria-selected="false" data-tab="info">ℹ️ Kasulik</button>
 </nav>
 <main>
@@ -173,6 +176,44 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
   </section>
   <section class="panel" id="enne"><div class="card check"><h3>Kontrollnimekiri</h3><ul id="checklist"></ul>
     <p class="note">Linnukesed salvestuvad selles brauseris.</p></div></section>
+  <section class="panel" id="pakk">
+    <div class="card"><h3>Mis temperatuurideks valmistuda</h3>
+      <p class="note" style="margin-top:0">Novembri pikaajalised keskmised (päev / öö). Planeeri vahemikku <b>0…25 °C</b>: sisemaal on hommikud 0–5 °C, päeval 15–18 °C, Melbourne'is ~22 °C. Ilm muutub mägedes tunniga.</p>
+      <div class="tablewrap"><table class="pk-temp">
+        <tr><th>Koht</th><th>Kuupäevad</th><th class="num">Päev °C</th><th class="num">Öö °C</th><th>Vihm, tuul, erisused</th></tr>
+        <tr><td>Melbourne</td><td>14.11, 29.–30.11</td><td class="num">22</td><td class="num">13</td><td>~64 mm kuus; päevad kõiguvad 15 ja 30+ °C vahel</td></tr>
+        <tr><td>Christchurch / Akaroa</td><td>14.–15.11, 29.11</td><td class="num">19</td><td class="num">8</td><td>~9 sajupäeva; idatuul ranniku ääres jahe</td></tr>
+        <tr><td>Lake Tekapo</td><td>15.–17.11</td><td class="num">17</td><td class="num">4–5</td><td>Kuiv (~8 sajupäeva), aga novembris keskmiselt ~2 öökülma, ~8 maapinnakülma</td></tr>
+        <tr><td>Aoraki/Mt Cook, Glentanner</td><td>17.–19.11</td><td class="num">16</td><td class="num">5</td><td>Väga märg: ~368 mm, ~16 sajupäeva; tugev tuul, külmalaine korral lund mägedes</td></tr>
+        <tr><td>Wanaka*</td><td>19.–21.11, 23.11</td><td class="num">~17</td><td class="num">~4–6</td><td>~8 sajupäeva; suur päeva-öö vahe (~12 °C)</td></tr>
+        <tr><td>Te Anau* / Milford Sound</td><td>21.–23.11</td><td class="num">17 / 16</td><td class="num">5 / 8</td><td>Milford ~570 mm, ~16 sajupäeva (ligik.) – vihmariided kindlasti</td></tr>
+        <tr><td>Läänerannik* (Fox, Okarito, Hokitika)</td><td>24.–27.11</td><td class="num">16</td><td class="num">9</td><td>Franz Josefis ~18 sajupäeva; liivakärbsed</td></tr>
+        <tr><td>Hanmer Springs*</td><td>27.–28.11</td><td class="num">~15–18</td><td class="num">~5</td><td>Ligikaudne; sisemaa, jahedad hommikud</td></tr>
+        <tr><td>Kaikōura</td><td>28.–29.11</td><td class="num">17</td><td class="num">10</td><td>Merel tuul ja pritsmed – tundub 5–10 °C külmem</td></tr>
+      </table></div>
+      <p class="note">☀️ UV-indeks on novembris Lõunasaarel ~11 (ekstreemne) – põletus tekib ka pilves ilmaga ~15 minutiga.<br>
+      * Wanaka = Queenstowni NIWA keskmine + Wanaka päevane amplituud; Te Anau = Manapouri jaam; läänerannik = Hokitika jaam; Hanmer = climate-data.org mudel (ligikaudne).<br>
+      Allikad: <a href="https://figure.nz/chart/suDfDLV40cwPuZWq-xkH9cnVUKYwxlaov" target="_blank" rel="noopener">NIWA 1991–2020 (Figure.NZ)</a>,
+      <a href="https://niwa.co.nz/sites/default/files/Canterbury%20climate%20FINAL%20WEB_0.pdf" target="_blank" rel="noopener">NIWA Canterbury</a>,
+      <a href="https://niwa.co.nz/sites/default/files/Otago%20Climate%20book%20WEB%202021.pdf" target="_blank" rel="noopener">NIWA Otago</a>,
+      <a href="https://niwa.co.nz/sites/default/files/West_Coast_Climatology_NIWA_web.pdf" target="_blank" rel="noopener">NIWA West Coast</a>,
+      <a href="https://www.bom.gov.au/climate/averages/tables/cw_086338.shtml" target="_blank" rel="noopener">BoM Melbourne</a>,
+      <a href="https://www.weather-atlas.com/en/new-zealand/milford-sound-weather-november" target="_blank" rel="noopener">Weather Atlas Milford</a>,
+      <a href="https://en.climate-data.org/oceania/new-zealand/canterbury/hanmer-springs-214820/" target="_blank" rel="noopener">climate-data.org Hanmer</a>.
+      Täpne ilm: <a href="https://www.metservice.com" target="_blank" rel="noopener">MetService</a> 7–10 päeva ette.</p>
+    </div>
+    <div class="card"><h3>Peamised põhimõtted</h3><ul>
+      <li><b>Kihid, mitte paksud riided:</b> aluskiht (meriino/süntees) + fliis + sulejope + vihma-tuulejope.</li>
+      <li><b>Vihmajope ja vihmapüksid igaühele</b>, Oliverile eriti – Mt Cook, Fiordland ja läänerannik on väga märjad.</li>
+      <li><b>Müts ja kindad</b> külmadeks hommikuteks, mägiradadele ja paadisõitudele.</li>
+      <li><b>Päike:</b> nokamüts või laia äärega müts, päikeseprillid, SPF 50, pikad varrukad.</li>
+      <li><b>Paat (vaalad, delfiinid):</b> kõik kihid selga + müts, merehaiguse tablett tund enne.</li>
+      <li><b>Paki 7 päevaks:</b> pese Wanakas/Te Anaus ja Hokitikas holiday parki pesumajas.</li>
+      <li><b>Jalatsid:</b> veekindlad matkajalatsid + sandaalid/plätud; enne lendu tallad puhtaks (biokontroll).</li>
+    </ul></div>
+    <div class="pk-grid" id="packlist"></div>
+    <p class="note"><span id="packCount"></span> · Linnukesed salvestuvad selles brauseris. <button type="button" class="btn" id="packReset">Tühjenda linnukesed</button></p>
+  </section>
   <section class="panel" id="info">
     <div class="card"><h3>Rakendused ja lingid</h3><ul>
       <li><a href="https://www.campermate.com" target="_blank" rel="noopener">CamperMate</a> – laagrid, prügilad, vabakämpingu kohad</li>
@@ -571,6 +612,46 @@ document.getElementById("dueList").innerHTML=DUE.map(d=>`<li><b>${esc(d[0])}</b>
   if(t) setTimeout(()=>{t.scrollIntoView({block:"center"}); autoSelect=true; try{t.click();}finally{autoSelect=false;}},400);
   document.querySelectorAll('nav.tabs button[data-tab="oo"]').forEach(b=>b.addEventListener("click",()=>{
     const tn=document.getElementById("night-"+TODAY); if(tn) setTimeout(()=>tn.scrollIntoView({behavior:"smooth",block:"center"}),60);}));
+})();
+</script>
+<script>
+// packing list (localStorage, guarded)
+(function(){
+const P=[
+ ["👩 Naine",[
+  "2 pikkade varrukatega aluskihti (meriino/süntees)","1 termo-aluspüks / legging","3–4 T-särki","1 õhuke fliis","1 paks fliis või villane kampsun","Sulejope või sünteetiline puhvis (pakitav)","Vihma-tuulejope kapuutsiga","Vihmapüksid","2 matka-/softshellpükse","1 linnapüks või teksad","1 lühike püks või kerge kleit Melbourne'iks","7 × aluspesu","5–6 paari sokke, sh 2 villaseid","Villane müts, kindad, buff","Päikesemüts ja päikeseprillid","Matkajalatsid (veekindlad)","Tossud linna","Sandaalid/plätud (dušš, kuumaveebasseinid)","Ujumisriided","Soe pidžaama + villased sokid ööseks","Mugavad lennuriided + kompressioonsokid"]],
+ ["👨 Mees",[
+  "2 pikkade varrukatega aluskihti (meriino/süntees)","1 termo-aluspüks","3–4 T-särki","1 õhuke fliis","1 paks fliis või villane kampsun","Sulejope või sünteetiline puhvis (pakitav)","Vihma-tuulejope kapuutsiga","Vihmapüksid","2 matka-/softshellpükse","1 linnapüks või teksad","1 lühike püks + särk Melbourne'iks","7 × aluspesu","5–6 paari sokke, sh 2 villaseid","Villane müts, kindad, buff","Päikesemüts ja päikeseprillid","Matkajalatsid (veekindlad)","Tossud linna","Sandaalid/plätud (dušš, kuumaveebasseinid)","Ujumispüksid","Soe pidžaama + villased sokid ööseks","Mugavad lennuriided + kompressioonsokid"]],
+ ["🧒 Oliver (5)",[
+  "3 pikkade varrukatega aluskihti","2 termo-aluspüksi","4–5 T-särki","2 pikkade varrukatega särki","1 fliis + 1 soe kampsun","Soe sulejope","Vihmajope + vihmapüksid (või vihmakombe)","3 pikka pükse (1 tuulekindel)","1 lühike püks","8–9 × aluspüksid (varuga)","7 paari sokke, sh 2 villaseid","Müts, kindad (veekindlad), buff","Päikesemüts kaelakaitsega + laste UV-prillid","UV-ujumissärk + ujumispüksid","Veekindlad matkajalatsid","Sandaalid/crocs","2 sooja (fliis)pidžaamat + villased sokid","Kaisuloom / oma padjapüür","Käsipagasisse 2 vahetuskomplekti"]],
+ ["🚤 Paadisõidud (vaalad, delfiinid)",[
+  "Kõik kihid selga: aluskiht + fliis + sulejope + vihmajope","Müts ja kindad kõigile","Merehaiguse tabletid (ka lapsele sobivad, küsi apteegist) – võta ~1 h enne","Ingverikommid / veepudel","Kuivkott telefonile ja kaamerale"]],
+ ["🧺 Pesu",[
+  "Pesukott (must pesu eraldi)","Pesukapslid või väike pesuvahend","Pesulõks/nöör vanis kuivatamiseks","Mündid/kaart holiday parki pesumasinale"]],
+ ["🎒 Muu oluline",[
+  "Liivakärbse- ja sääsetõrje (DEET/pikaridiin)","SPF 50+ päikesekreem + huulepalsam SPF","I-tüüpi pistikuadapter (NZ ja AU, 230 V) + USB-laadija","Matkasaapad puhtaks pestud (NZ biokontroll, deklareeri)","Pealamp/taskulamp","Korduskasutatavad veepudelid + termos","Väike esmaabikott (palavik, plaastrid, allergia)"]]
+];
+const KEY="nz2026pack"; let st={}; try{st=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const root=document.getElementById("packlist"), cnt=document.getElementById("packCount");
+let total=0;
+function upd(){const n=Object.values(st).filter(Boolean).length; cnt.textContent=`Pakitud ${n} / ${total}`;}
+P.forEach(([title,items],g)=>{
+  const card=document.createElement("div"); card.className="card check";
+  card.innerHTML=`<h3>${e(title)}</h3><ul></ul>`; const ul=card.querySelector("ul");
+  items.forEach((t,i)=>{ total++; const k=g+"-"+i, id="pk"+k;
+    const li=document.createElement("li");
+    li.innerHTML=`<input type="checkbox" id="${id}" ${st[k]?"checked":""}><label for="${id}">${e(t)}</label>`;
+    if(st[k]) li.classList.add("done");
+    li.querySelector("input").onchange=ev=>{st[k]=ev.target.checked; li.classList.toggle("done",ev.target.checked);
+      try{localStorage.setItem(KEY,JSON.stringify(st))}catch(err){} upd();};
+    ul.appendChild(li);});
+  root.appendChild(card);
+});
+upd();
+document.getElementById("packReset").onclick=()=>{ if(!confirm("Tühjendan kõik pakkimise linnukesed?")) return;
+  st={}; try{localStorage.removeItem(KEY)}catch(err){}
+  root.querySelectorAll("input").forEach(i=>{i.checked=false; i.closest("li").classList.remove("done");}); upd();};
 })();
 </script>
 </body>
