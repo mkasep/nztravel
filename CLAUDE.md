@@ -4,6 +4,7 @@ Interaktiivne reisikava (Uus-Meremaa lõunasaar + Melbourne, 12.11–01.12.2026)
 
 ## Töövoog
 - Iga kord, kui reisikava muutub (marsruut, ööbimised, broneeringute staatus, lennud, tegevused), uuenda `index.html` andmeid (`DAYS`, `BRON`, `FLIGHTS`, `CHECK`, `PAID`/`DUE`, `SUMMARY` (päeva kokkuvõtte paneel, aktiivne päev) ja `SLOW` (aeglane/väsinud päev, samad ööbimised); Ööbimise vahekaart tuleb `DAYS[].night`-ist) ja **push'i kohe `main` harusse** — kasutaja jälgib lehte telefonist.
+- Leht on kahekeelne (ET/EN, nupp all paremal, `?lang=en`). Muutes eestikeelseid andmeid, uuenda ka `I18N_EN` (days, summary, slow, bron, flights, check, paid, due, pack) ning staatilistes plokkides `data-en` atribuute ja `data-lang="en"` koopiaid.
 - Hoia sama info kooskõlas Exceliga kasutaja arvutis: `~/Documents/NZReis/NZ_reisiplaan_2026_v2.xlsx` (ja kaardifailiga `NZ_reisikava_2026.kml`).
 - Leht on avalik repo — ära lisa nimesid (kasuta „Mees”, „Naine”, „Laps”), broneeringunumbreid, telefoninumbreid, aadresse ega makseandmeid. Eelarve võib olla.
 - Commit'i autor: `mkasep <mkasep@users.noreply.github.com>`; ajalugu on puhastatud, ära lisa isikuandmeid ka commit'i sõnumitesse.
