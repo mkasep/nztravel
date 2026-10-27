@@ -5,141 +5,187 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Uus-Meremaa 2026</title>
 <script>(function(){var l="et";try{var q=new URLSearchParams(location.search).get("lang");if(q==="en"||q==="et"){l=q;localStorage.setItem("nz2026lang",q);}else{l=localStorage.getItem("nz2026lang")||"et";}}catch(e){}document.documentElement.lang=l==="en"?"en":"et";})();</script>
+<meta name="theme-color" content="#000000">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f6f3ec; --surface:#ffffff; --ink:#1d2a2a; --muted:#5f6f6c; --line:#e3ddd0;
-  --accent:#0f6b63; --accent-soft:#d9ece8; --warm:#c8762b; --warm-soft:#f6e6d3;
-  --ok:#2e7d4f; --ok-soft:#dcefe2; --warn:#a86a00; --warn-soft:#fbefd2; --todo:#7b8583; --todo-soft:#ecefee;
-  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.05);
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121817; --surface:#1a2221; --ink:#e7ecea; --muted:#9aa8a5; --line:#2a3533;
-  --accent:#4fb3a7; --accent-soft:#1d3532; --warm:#e09a55; --warm-soft:#3a2b1c;
-  --ok:#6cc68f; --ok-soft:#1d3326; --warn:#e2b14a; --warn-soft:#3a3018; --todo:#9aa8a5; --todo-soft:#253030;
-  --shadow:none;}}
-:root[data-theme="dark"]{
-  --bg:#121817; --surface:#1a2221; --ink:#e7ecea; --muted:#9aa8a5; --line:#2a3533;
-  --accent:#4fb3a7; --accent-soft:#1d3532; --warm:#e09a55; --warm-soft:#3a2b1c;
-  --ok:#6cc68f; --ok-soft:#1d3326; --warn:#e2b14a; --warn-soft:#3a3018; --todo:#9aa8a5; --todo-soft:#253030; --shadow:none;}
+:root{color-scheme:dark;--bg:#000;--text:#e7e9ea;--muted:#71767b;--line:#2f3336;--blue:#1d9bf0;--hover:#080808;--hover2:#16181c;--green:#00ba7c;--warn:#ffd400;--btn:#e7e9ea}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
-a{color:var(--accent)}
-header{padding:28px 16px 12px;max-width:1400px;margin:0 auto}
-h1{font-family:Fraunces,Georgia,serif;font-size:clamp(28px,4vw,42px);margin:0 0 4px;letter-spacing:-.01em}
-.sub{color:var(--muted);margin:0 0 16px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow)}
-.stat b{display:block;font-size:20px;font-family:Fraunces,Georgia,serif}
-.stat span{color:var(--muted);font-size:13px}
-nav.tabs{display:flex;gap:6px;flex-wrap:wrap;max-width:1400px;margin:0 auto;padding:0 16px}
-nav.tabs button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;font:inherit;cursor:pointer}
-nav.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-main{max-width:1400px;margin:0 auto;padding:16px}
+html,body{margin:0;background:#000;color:var(--text);font:400 15px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{max-width:1080px;margin:0 auto;min-height:100vh;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+header{padding:12px 16px 0}
+.toprow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+h1{font-size:20px;font-weight:700;line-height:1.25;margin:0;letter-spacing:0}
+.sub{color:var(--muted);margin:2px 0 0;font-size:15px;line-height:1.3}
+.stats{display:flex;gap:16px;overflow-x:auto;padding:14px 0 12px;scrollbar-width:none}
+.stats::-webkit-scrollbar{display:none}
+.stat{background:none;border:0;border-radius:0;box-shadow:none;padding:0;white-space:nowrap}
+.stat b{display:inline;font-size:15px;font-weight:700;font-family:inherit;color:var(--text)}
+.toprow>div{min-width:0;flex:1}
+.stat span{color:var(--muted);font-size:15px;font-weight:400;margin-left:4px}
+.langbtn{flex:none;height:32px;padding:0 16px;border-radius:999px;border:1px solid #536471;background:transparent;color:var(--text);font-weight:700;font-size:14px;cursor:pointer}
+.langbtn:hover{background:rgba(239,243,244,.1)}
+nav.tabs{position:sticky;top:0;z-index:30;display:flex;overflow-x:auto;scrollbar-width:none;background:rgba(0,0,0,.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);margin:0;padding:0;max-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;position:relative;border:0;background:transparent;color:var(--muted);padding:16px 16px 14px;border-radius:0;font-weight:500;font-size:15px;line-height:1.2;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:var(--text);background:rgba(231,233,234,.08)}
+nav.tabs button[aria-selected="true"]{color:var(--text);font-weight:700;background:transparent}
+nav.tabs button[aria-selected="true"]::after{content:"";position:absolute;left:16px;right:16px;bottom:0;height:4px;border-radius:999px;background:var(--blue)}
+main{margin:0;padding:0;max-width:none}
 .panel{display:none}.panel.active{display:block}
-.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
-.mapwrap{position:sticky;top:20px;height:calc(100vh - 40px);min-width:0}
-#map{height:100%;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);z-index:0}
-@media (max-width:900px){.split{grid-template-columns:1fr}.mapwrap{position:relative;top:0;height:46vh;order:-1}}
-/* day summary panel */
-#sumPanel{position:absolute;top:0;left:0;bottom:0;width:min(380px,45%);z-index:1001;display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px 0 0 14px;box-shadow:4px 0 24px rgba(0,0,0,.14);transform:translateX(-12px);opacity:0;visibility:hidden;transition:transform .25s ease,opacity .25s ease,visibility 0s linear .25s;overflow:hidden}
-#sumPanel.open{transform:none;opacity:1;visibility:visible;transition:transform .25s ease,opacity .25s ease}
-#sumPanel .sp-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
-#sumPanel .sp-date{font-family:Fraunces,Georgia,serif;font-size:19px}
-#sumPanel .sp-date small{font-family:Inter;color:var(--muted);font-size:13px;margin-left:6px}
-#sumPanel h2{font-family:Fraunces,Georgia,serif;font-size:20px;line-height:1.25;margin:2px 0 0;overflow-wrap:anywhere}
-#sumPanel .sp-x{flex:none;width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
-#sumPanel .sp-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px;overscroll-behavior:contain}
-#sumPanel .sp-body h3{font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.9fr);gap:0;align-items:start}
+.mapwrap{position:sticky;top:49px;height:calc(100vh - 49px);min-width:0;border-left:1px solid var(--line)}
+#map{height:100%;border-radius:0;border:0;box-shadow:none;z-index:0;background:#000}
+@media (min-width:901px){#map{border-radius:0}}
+@media (max-width:900px){
+  .split{grid-template-columns:1fr}
+  .mapwrap{position:relative;top:0;height:auto;order:-1;border-left:0;border-bottom:0;padding:8px 12px 0}
+  #map{height:38vh;min-height:220px;border-radius:16px;border:1px solid var(--line);overflow:hidden}
+}
+#sumPanel{position:absolute;top:0;left:0;bottom:0;width:min(380px,48%);z-index:5;display:flex;flex-direction:column;background:#000;color:var(--text);border-right:1px solid var(--line);border-radius:0;box-shadow:none;transform:translateX(-12px);opacity:0;visibility:hidden;transition:transform .2s ease,opacity .2s ease,visibility 0s linear .2s;overflow:hidden}
+#sumPanel.open{transform:none;opacity:1;visibility:visible;transition:transform .2s ease,opacity .2s ease}
+#sumPanel .sp-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:12px 12px 10px 16px;border-bottom:1px solid var(--line)}
+#sumPanel .sp-date{font-weight:700;font-size:15px}
+#sumPanel .sp-date small{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+#sumPanel h2{font-size:17px;font-weight:700;line-height:1.25;margin:2px 0 0;overflow-wrap:anywhere}
+#sumPanel .sp-x{flex:none;width:34px;height:34px;border-radius:999px;border:0;background:transparent;color:var(--text);font-size:20px;line-height:1;cursor:pointer}
+#sumPanel .sp-x:hover{background:rgba(231,233,234,.1)}
+#sumPanel .sp-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px 16px;overscroll-behavior:contain}
+#sumPanel .sp-body h3{font-size:15px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--text);margin:16px 0 6px}
 #sumPanel .sp-body p{margin:6px 0;overflow-wrap:anywhere}
-#sumPanel .sp-body ul{margin:4px 0;padding-left:18px}
-#sumPanel .sp-body li{margin:3px 0;overflow-wrap:anywhere}
+#sumPanel .sp-body ul{margin:4px 0 8px;padding:0 0 0 18px}
+#sumPanel .sp-body li{margin:4px 0;overflow-wrap:anywhere}
 #sumPanel .chip{white-space:normal}
-#sumPanel ol.tl{list-style:none;margin:4px 0;padding:0}
-#sumPanel ol.tl li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
-#sumPanel ol.tl b{color:var(--accent);font-variant-numeric:tabular-nums}
-#sumPanel .sp-mode{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px;margin:0 0 12px}
-#sumPanel .sp-mode button{flex:1;border:0;border-radius:999px;padding:7px 8px;background:transparent;color:var(--ink);font:500 13px Inter,sans-serif;cursor:pointer;white-space:nowrap}
-#sumPanel .sp-mode button[aria-pressed="true"][data-mode="active"]{background:var(--accent);color:#fff}
-#sumPanel .sp-mode button[aria-pressed="true"][data-mode="slow"]{background:var(--warm);color:#fff}
-#sumPanel .sp-box{background:var(--accent-soft);border-radius:10px;padding:8px 12px;margin:8px 0}
-#sumPanel .sp-box.food{background:var(--warm-soft)}
+#sumPanel ol.tl{list-style:none;margin:4px 0 8px;padding:0}
+#sumPanel ol.tl li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+#sumPanel ol.tl b{color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+#sumPanel .sp-mode{display:flex;gap:8px;background:transparent;border:0;border-radius:0;padding:0;margin:0 0 12px}
+#sumPanel .sp-mode button{flex:1;height:32px;border-radius:999px;border:1px solid #536471;padding:0 12px;background:transparent;color:var(--text);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+#sumPanel .sp-mode button:hover{background:rgba(231,233,234,.1)}
+#sumPanel .sp-mode button[aria-pressed="true"]{background:var(--btn);color:#0f1419;border-color:var(--btn)}
+#sumPanel .sp-mode button[aria-pressed="true"]:hover{background:#d7dbdc}
+#sumPanel .sp-box{background:transparent;border-radius:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0;margin:8px 0}
+#sumPanel .sp-box.food{background:transparent}
 #sumPanel .sp-night{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 #sumPanel .sp-foot{display:flex;gap:8px;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--line)}
-#sumPanel .sp-foot button{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
-#sumPanel .sp-foot button:disabled{opacity:.4;cursor:default}
-#sumPanel button:focus-visible,#sumPanel a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#sumPanel .sp-foot button{height:32px;font-weight:700;font-size:13px;padding:0 14px;border-radius:999px;border:1px solid #536471;background:transparent;color:var(--text);cursor:pointer}
+#sumPanel .sp-foot button:hover{background:rgba(231,233,234,.1)}
+#sumPanel .sp-foot button[data-step="1"]{background:var(--btn);color:#0f1419;border-color:var(--btn)}
+#sumPanel .sp-foot button[data-step="1"]:hover{background:#d7dbdc}
+#sumPanel .sp-foot button:disabled{opacity:.4;cursor:default;background:transparent;color:var(--muted);border-color:#2f3336}
+#sumPanel .sp-foot button[data-step="1"]:disabled{background:transparent;color:var(--muted)}
 #sumBackdrop{display:none}
 @media (max-width:900px){
-  #sumPanel{position:fixed;top:auto;left:0;right:0;bottom:0;width:auto;max-height:70vh;border-radius:16px 16px 0 0;border-bottom:0;box-shadow:0 -6px 30px rgba(0,0,0,.2);transform:translateY(100%);opacity:1;z-index:1101}
+  #sumPanel{position:fixed;top:auto;left:0;right:0;bottom:0;width:auto;max-height:72vh;border-radius:16px 16px 0 0;border:1px solid var(--line);border-bottom:0;box-shadow:none;transform:translateY(100%);opacity:1;z-index:1101}
   #sumPanel.open{transform:none}
-  #sumPanel .sp-head::before{content:"";position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:var(--line)}
-  #sumBackdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:1100;opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s linear .25s}
-  #sumBackdrop.open{opacity:1;visibility:visible;transition:opacity .25s}
+  #sumPanel .sp-head{position:relative;padding-top:16px}
+  #sumPanel .sp-head::before{content:"";position:absolute;top:6px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:999px;background:#536471}
+  #sumBackdrop{display:block;position:fixed;inset:0;background:rgba(91,112,131,.4);z-index:1100;opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s linear .2s}
+  #sumBackdrop.open{opacity:1;visibility:visible;transition:opacity .2s}
 }
 @media (prefers-reduced-motion:reduce){#sumPanel,#sumBackdrop{transition:none!important}}
-.day{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;transition:border-color .15s}
-.day:hover,.day.sel{border-color:var(--accent)}
-.day.sel{outline:2px solid var(--accent-soft)}
-.dhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
-.date{font-family:Fraunces,Georgia,serif;font-size:19px}
-.date small{font-family:Inter;color:var(--muted);font-size:13px;margin-left:6px}
-.route{font-weight:600;margin:2px 0 8px}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.chip{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
-.chip.w{background:var(--warm-soft)}
-.chip.now{background:var(--surface);border:1px solid var(--line)}
-.chip.fc{background:var(--ok-soft)}
-ul.acts{margin:6px 0 8px;padding-left:18px}
-ul.acts li{margin:2px 0}
-.night{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px;font-size:14px}
-.badge{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:600}
-.b-ok{background:var(--ok-soft);color:var(--ok)} .b-warn{background:var(--warn-soft);color:var(--warn)} .b-todo{background:var(--todo-soft);color:var(--todo)}
-.note{font-size:13px;color:var(--muted);margin-top:6px}
-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
-th{background:var(--accent-soft);font-weight:600}
+.day{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:12px 16px;margin:0;box-shadow:none;cursor:pointer}
+.day:hover{background:var(--hover)}
+.day.sel{background:var(--hover2)}
+.day.today{border-color:var(--line);box-shadow:none}
+.dhead{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.date{font-weight:700;font-size:15px}
+.date small{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.route{font-weight:700;margin:2px 0 4px;font-size:15px}
+.chips{display:flex;gap:4px 12px;flex-wrap:wrap;margin:0 0 6px;color:var(--muted)}
+.chip{font-size:13px;padding:0;border-radius:0;background:none;color:var(--muted);white-space:normal;border:0}
+.chip.w,.chip.now,.chip.fc{background:none;border:0}
+ul.acts{margin:4px 0 6px;padding-left:18px}
+ul.acts li{margin:3px 0}
+.night{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px;margin-top:8px;font-size:15px}
+.badge{font-size:13px;padding:0;border-radius:0;font-weight:700;background:none}
+.b-ok{color:var(--green)} .b-warn{color:var(--warn)} .b-todo{color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
 .tablewrap{overflow-x:auto}
-.check li{list-style:none;margin:6px 0;display:flex;gap:10px;align-items:flex-start}
-.check ul{padding:0}
-.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--accent)}
+table{width:100%;border-collapse:collapse;background:transparent;border:0;border-radius:0}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
+th:first-child,td:first-child{padding-left:16px}
+th:last-child,td:last-child{padding-right:16px}
+th{background:transparent;color:var(--muted);font-weight:500;font-size:13px}
+tr:hover td{background:var(--hover)}
+.check ul{padding:0;margin:0}
+.check li{list-style:none;margin:0;display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-top:1px solid var(--line)}
+.check li:hover{background:var(--hover)}
+.check input{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:1px 0 0;flex:none;border:2px solid #536471;border-radius:2px;background:transparent;display:grid;place-items:center;cursor:pointer;position:relative}
+.check input:checked{background:var(--blue);border-color:var(--blue)}
+.check input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.check input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.check label{cursor:pointer;line-height:1.35}
 .check .done label{text-decoration:line-through;color:var(--muted)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
-.card h3{margin:0 0 8px;font-family:Fraunces,Georgia,serif}
+.card{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0 0 8px;margin:0;box-shadow:none}
+.card h3{margin:0;padding:14px 16px 6px;font-size:17px;font-weight:700;font-family:inherit}
+.card ul{margin:0;padding:0;list-style:none}
+.card > ul > li,.card li{padding:10px 16px;border-top:1px solid var(--line);margin:0}
+.card .check li{border-top:1px solid var(--line)}
+.card > .note,.card > p.note{padding:4px 16px 8px;margin-top:0}
+.card .tablewrap{margin-top:4px}
 html[lang="en"] [data-lang="et"],html[lang="et"] [data-lang="en"]{display:none!important}
-.langbtn{position:fixed;right:70px;bottom:14px;z-index:1000;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer;box-shadow:var(--shadow);font:600 13px Inter,sans-serif}
-.themebtn{position:fixed;right:14px;bottom:14px;z-index:1000;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer;box-shadow:var(--shadow)}
-.leaflet-popup-content{font:13px/1.4 Inter,sans-serif}
-.pop img{display:block;width:240px;max-width:100%;height:150px;object-fit:cover;border-radius:8px;margin:6px 0 2px;background:var(--line)}
-.pop .cap{font-size:11px;color:#7b8583}
-.pin{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font:600 12px Inter;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
-.bar{height:14px;border-radius:999px;background:var(--line);overflow:hidden;margin:6px 0}
-.bar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+.leaflet-popup-content{font:13px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:10px 12px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#000;color:var(--text);box-shadow:none}
+.leaflet-popup-content-wrapper{border:1px solid var(--line);border-radius:16px}
+.leaflet-popup-tip{border:1px solid var(--line)}
+.leaflet-container{background:#000;font:inherit}
+.leaflet-container a{color:var(--blue)}
+.leaflet-bar{border:1px solid var(--line)!important;border-radius:16px;overflow:hidden;box-shadow:none}
+.leaflet-bar a,.leaflet-bar a:hover{background:#000;color:var(--text);border-bottom:1px solid var(--line);width:32px;height:32px;line-height:32px}
+.leaflet-control-attribution{background:rgba(0,0,0,.75)!important;color:var(--muted)!important;font-size:11px!important}
+.leaflet-control-attribution a{color:var(--blue)!important}
+.pop img{display:block;width:240px;max-width:100%;height:150px;object-fit:cover;border-radius:16px;margin:8px 0 2px;background:var(--line)}
+.pop .cap{font-size:12px;color:var(--muted)}
+.pin{width:26px;height:26px;border-radius:999px;display:grid;place-items:center;color:#fff;font:700 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;border:2px solid #000;box-shadow:0 0 0 1px rgba(231,233,234,.35)}
+.bar{height:4px;border-radius:0;background:var(--line);overflow:hidden;margin:8px 16px 10px}
+.bar span{display:block;height:100%;background:var(--blue)}
 td.num,th.num{text-align:right;white-space:nowrap}
-.day.today,.nightc.today{border-color:var(--warm);box-shadow:0 0 0 3px var(--warm-soft)}
-.pill{display:inline-block;font:600 11.5px Inter,sans-serif;padding:2px 8px;border-radius:999px;background:var(--warm);color:#fff;margin-left:6px;vertical-align:middle}
-.nights{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.nightc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.pill{display:inline;font-weight:700;font-size:13px;padding:0;border-radius:0;background:none;color:var(--blue);margin-left:8px;vertical-align:baseline}
+.nights{display:block}
+.nightc{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:12px 16px;box-shadow:none}
+.nightc:hover{background:var(--hover)}
+.nightc.today{box-shadow:none}
 .nightc.past{opacity:.55}
-.nightc .when{font-family:Fraunces,Georgia,serif;font-size:18px}
-.nightc .when small{font-family:Inter;color:var(--muted);font-size:13px;margin-left:6px}
-.nightc .place{font-weight:600;margin:4px 0 8px}
+.nightc .when{font-weight:700;font-size:15px;font-family:inherit}
+.nightc .when small{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.nightc .place{font-weight:700;margin:2px 0 6px;font-size:15px}
 .nightc .acts2{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.btn{display:inline-block;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--bg)}
-footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 60px}
-.pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;align-items:start}
-.pk-grid .card{margin-bottom:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:32px;font-size:14px;font-weight:700;padding:0 16px;border-radius:999px;border:1px solid #536471;color:var(--text);text-decoration:none;background:transparent;cursor:pointer;line-height:1}
+.btn:hover{background:rgba(231,233,234,.1);text-decoration:none}
+a.btn.primary,.btn.primary{background:var(--btn);color:#0f1419;border-color:var(--btn)}
+a.btn.primary:hover,.btn.primary:hover{background:#d7dbdc;text-decoration:none}
+footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(28px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+#sumPanel .sp-foot{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.pk-grid{display:block}
+.pk-grid .card{margin:0}
 #packlist .check li{flex-wrap:wrap}
-#packlist .check label{flex:1;min-width:10em}
-#packlist .check .pk-note{flex:1 0 calc(100% - 28px);margin:0 0 2px 28px;font-size:12.5px;line-height:1.35}
+#packlist .check label{flex:1;min-width:8em}
+#packlist .check .pk-note{flex:1 0 calc(100% - 32px);margin:2px 0 0 32px;font-size:13px;line-height:1.35}
+.panel > .note{padding:12px 16px 16px}
+#dueList{list-style:none;margin:0;padding:0}
+#dueList li{padding:12px 16px;border-top:1px solid var(--line);margin:0}
+#kulud .card + .tablewrap{border-top:0}
+@media (max-width:900px){
+  h1{font-size:18px}
+  .sub{font-size:13px}
+  nav.tabs button{padding:14px 14px 12px}
+  nav.tabs button[aria-selected="true"]::after{left:12px;right:12px}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1 data-en="New Zealand South Island 2026">Uus-Meremaa lõunasaar 2026</h1>
-  <p class="sub" data-en="12.11 – 01.12.2026 · Husband, Wife and Child · Apollo Euro Plus campervan">12.11 – 01.12.2026 · Mees, Naine ja Laps · Apollo Euro Plus campervan</p>
+  <div class="toprow">
+    <div>
+      <h1 data-en="New Zealand South Island 2026">Uus-Meremaa lõunasaar 2026</h1>
+      <p class="sub" data-en="12.11 – 01.12.2026 · Husband, Wife and Child · Apollo Euro Plus campervan">12.11 – 01.12.2026 · Mees, Naine ja Laps · Apollo Euro Plus campervan</p>
+    </div>
+    <button class="langbtn" id="langBtn" aria-label="Language / Keel"></button>
+  </div>
   <div class="stats">
     <div class="stat"><b>15</b><span data-en="days with the van">päeva vaniga</span></div>
     <div class="stat"><b id="kmTotal">–</b><span data-en="km of driving">km sõitu</span></div>
@@ -149,14 +195,14 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
   </div>
 </header>
 <nav class="tabs" role="tablist">
-  <button role="tab" aria-selected="true" data-tab="kava" data-en="🗺️ Plan">🗺️ Kava</button>
-  <button role="tab" aria-selected="false" data-tab="oo" data-en="🛏️ Nights">🛏️ Ööbimine</button>
-  <button role="tab" aria-selected="false" data-tab="bron" data-en="🏕️ Bookings">🏕️ Broneeringud</button>
-  <button role="tab" aria-selected="false" data-tab="lennud" data-en="✈️ Flights">✈️ Lennud</button>
-  <button role="tab" aria-selected="false" data-tab="kulud" data-en="💶 Costs">💶 Kulud</button>
-  <button role="tab" aria-selected="false" data-tab="enne" data-en="✅ Before the trip">✅ Enne reisi</button>
-  <button role="tab" aria-selected="false" data-tab="pakk" data-en="🧳 Packing">🧳 Pakkimine</button>
-  <button role="tab" aria-selected="false" data-tab="info" data-en="ℹ️ Useful">ℹ️ Kasulik</button>
+  <button role="tab" aria-selected="true" data-tab="kava" data-en="Plan">Kava</button>
+  <button role="tab" aria-selected="false" data-tab="oo" data-en="Nights">Ööbimine</button>
+  <button role="tab" aria-selected="false" data-tab="bron" data-en="Bookings">Broneeringud</button>
+  <button role="tab" aria-selected="false" data-tab="lennud" data-en="Flights">Lennud</button>
+  <button role="tab" aria-selected="false" data-tab="kulud" data-en="Costs">Kulud</button>
+  <button role="tab" aria-selected="false" data-tab="enne" data-en="Before the trip">Enne reisi</button>
+  <button role="tab" aria-selected="false" data-tab="pakk" data-en="Packing">Pakkimine</button>
+  <button role="tab" aria-selected="false" data-tab="info" data-en="Useful">Kasulik</button>
 </nav>
 <main>
   <section class="panel active" id="kava">
@@ -169,7 +215,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
     </div>
   </section>
   <section class="panel" id="oo"><div id="nights" class="nights"></div>
-    <p class="note" data-en="🧭 opens Google Maps navigation straight to the campsite.">🧭 avab Google Mapsi navigeerimise otse ööbimiskohta.</p></section>
+    <p class="note" data-en="Opens Google Maps navigation straight to the campsite.">Avab Google Mapsi navigeerimise otse ööbimiskohta.</p></section>
   <section class="panel" id="bron"><div class="tablewrap"><table id="bronTable"></table></div>
     <p class="note" data-en="When booking always check both the arrival &lt;b&gt;and&lt;/b&gt; departure date. Multi-night stops: Tekapo, Mt Cook, Wanaka, Te Anau.">Kontrolli broneerides alati saabumis- <b>ja</b> lahkumiskuupäeva. Mitmeöised peatused: Tekapo, Mt Cook, Te Anau.</p></section>
   <section class="panel" id="lennud"><div class="tablewrap"><table id="flightTable"></table></div></section>
@@ -178,7 +224,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
       <div class="bar" role="img" id="paidBar"><span></span></div>
       <p class="note" id="paidLine"></p></div>
     <div class="tablewrap"><table id="paidTable"></table></div>
-    <div class="card" style="margin-top:14px"><h3 data-en="Known upcoming payments">Teada tulevased maksed</h3><ul id="dueList"></ul></div>
+    <div class="card"><h3 data-en="Known upcoming payments">Teada tulevased maksed</h3><ul id="dueList"></ul></div>
   </section>
   <section class="panel" id="enne"><div class="card check"><h3 data-en="Checklist">Kontrollnimekiri</h3><ul id="checklist"></ul>
     <p class="note" data-en="Ticks are saved in this browser.">Linnukesed salvestuvad selles brauseris.</p></div></section>
@@ -294,8 +340,6 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 16px 6
 </main>
 <div id="sumBackdrop" aria-hidden="true"></div>
 <footer data-en="Weather figures are long-term averages, not a forecast · Coordinates approximate · Map © OpenStreetMap">Ilmaandmed on pikaajalised keskmised, mitte prognoos · Koordinaadid ligikaudsed · Kaart © OpenStreetMap</footer>
-<button class="langbtn" id="langBtn" aria-label="Language / Keel"></button>
-<button class="themebtn" id="themeBtn" aria-label="Vaheta teemat">🌓</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -327,7 +371,7 @@ async function photo(e){
   const ph=/<div class="ph"[^>]*><\/div>/;
   if(!(k in photoCache)) photoCache[k]=await findPhoto(k,ll);
   const p=photoCache[k];
-  const out=p?`<a href="${esc(p.url)}" target="_blank" rel="noopener"><img src="${esc(p.src)}" alt="${esc(p.title)}"></a><div class="cap">📷 Wikipedia · ${esc(p.title)}</div>`:"";
+  const out=p?`<a href="${esc(p.url)}" target="_blank" rel="noopener"><img src="${esc(p.src)}" alt="${esc(p.title)}"></a><div class="cap">Wikipedia · ${esc(p.title)}</div>`:"";
   pop.setContent(html.replace(ph,out));
   const img=pop.getElement()&&pop.getElement().querySelector(".pop img");
   if(img){img.addEventListener("load",()=>pop.update());
@@ -469,12 +513,6 @@ const BADGE = {ok:["b-ok",T("✓ Korras","✓ OK")],warn:["b-warn",T("! Tähelep
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const link = (t,u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`;
 
-// theme
-const root=document.documentElement;
-document.getElementById("themeBtn").onclick=()=>{
-  const dark = root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-  root.dataset.theme = dark ? "light" : "dark";
-};
 // language
 if(LANG==="en") document.querySelectorAll("[data-en]").forEach(el=>{el.innerHTML=el.getAttribute("data-en");});
 document.title=T("Uus-Meremaa 2026","New Zealand 2026");
@@ -484,6 +522,7 @@ document.title=T("Uus-Meremaa 2026","New Zealand 2026");
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===b.dataset.tab));
+  const nav=b.parentElement; if(nav) nav.scrollTo({left:Math.max(0,b.offsetLeft-12),behavior:"smooth"});
   if(b.dataset.tab==="kava") setTimeout(()=>map.invalidateSize(),50);
 });
 
@@ -493,18 +532,18 @@ document.getElementById("kmTotal").textContent=km.toLocaleString(LOC);
 
 // map
 const map=L.map("map",{scrollWheelZoom:true});
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenStreetMap"}).addTo(map);
-const pin=(c,t)=>L.divIcon({className:"",html:`<div class="pin" style="background:${c}">${t}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap © CARTO",subdomains:"abcd"}).addTo(map);
+const pin=(c,t,fg)=>L.divIcon({className:"",html:`<div class="pin" style="background:${c};color:${fg||"#fff"}">${t}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
 const dayLayers=[]; const nzPts=[]; const routePts=[];
 DAYS.forEach((d,i)=>{
   const g=L.featureGroup().addTo(map);
-  d.acts.forEach(a=>{L.marker([a[2],a[3]],{icon:pin("#0f6b63",i+1)}).bindPopup(`<div class="pop"><b>${esc(d.d)}</b><br>${link(a[0],a[1])}<div class="ph" data-place="${esc(a[4]||a[0])}" data-ll="${a[2]},${a[3]}"></div></div>`,{maxWidth:260}).on("popupopen",photo).addTo(g); if(a[3]>160) nzPts.push([a[2],a[3]]);});
-  if(d.night){L.marker([d.night[2],d.night[3]],{icon:pin("#c8762b","⌂")}).bindPopup(`<div class="pop"><b>${T("Öö","Night")} ${esc(d.d)}</b><br>${link(d.night[0],d.night[1])}<div class="ph" data-place="${esc(d.night[5]||d.night[0])}" data-ll="${d.night[2]},${d.night[3]}"></div></div>`,{maxWidth:260}).on("popupopen",photo).addTo(g);
+  d.acts.forEach(a=>{L.marker([a[2],a[3]],{icon:pin("#1d9bf0",i+1)}).bindPopup(`<div class="pop"><b>${esc(d.d)}</b><br>${link(a[0],a[1])}<div class="ph" data-place="${esc(a[4]||a[0])}" data-ll="${a[2]},${a[3]}"></div></div>`,{maxWidth:260}).on("popupopen",photo).addTo(g); if(a[3]>160) nzPts.push([a[2],a[3]]);});
+  if(d.night){L.marker([d.night[2],d.night[3]],{icon:pin("#e7e9ea","⌂","#0f1419")}).bindPopup(`<div class="pop"><b>${T("Öö","Night")} ${esc(d.d)}</b><br>${link(d.night[0],d.night[1])}<div class="ph" data-place="${esc(d.night[5]||d.night[0])}" data-ll="${d.night[2]},${d.night[3]}"></div></div>`,{maxWidth:260}).on("popupopen",photo).addTo(g);
     if(d.night[3]>160){nzPts.push([d.night[2],d.night[3]]); routePts.push([d.night[2],d.night[3]]);}}
   dayLayers.push(g);
 });
 routePts.push([-43.4855,172.5415]);
-L.polyline(routePts,{color:"#c8762b",weight:3,opacity:.75,dashArray:"6 6"}).addTo(map);
+L.polyline(routePts,{color:"#1d9bf0",weight:3,opacity:.9}).addTo(map);
 const nzBounds=L.latLngBounds(nzPts); map.fitBounds(nzBounds,{padding:[20,20]});
 
 // today (device local date; ?paev=19.11 for testing)
@@ -533,9 +572,9 @@ function chipText(sel){const c=document.querySelector(sel); return c&&!c.hidden&
 let sumMode="active"; try{sumMode=localStorage.getItem("nz2026mode")||"active";}catch(e){}
 function renderSummary(i){
   const d=DAYS[i], slow=sumMode==="slow"&&SLOW[d.d], S=slow?Object.assign({},SUMMARY[d.d]||{},SLOW[d.d]):(SUMMARY[d.d]||{}), n=d.night, has=Object.keys(S).length>0;
-  const modeSw=SLOW[d.d]?`<div class="sp-mode" role="group" aria-label="${T("Päeva tempo","Day pace")}"><button type="button" data-mode="active" aria-pressed="${!slow}">${T("⚡ Aktiivne päev","⚡ Active day")}</button><button type="button" data-mode="slow" aria-pressed="${!!slow}">${T("🐢 Aeglane / väsinud","🐢 Slow / tired")}</button></div>`:"";
+  const modeSw=SLOW[d.d]?`<div class="sp-mode" role="group" aria-label="${T("Päeva tempo","Day pace")}"><button type="button" data-mode="active" aria-pressed="${!slow}">${T("Aktiivne päev","Active day")}</button><button type="button" data-mode="slow" aria-pressed="${!!slow}">${T("Aeglane / väsinud","Slow / tired")}</button></div>`:"";
   const list=a=>Array.isArray(a)&&a.length?`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"";
-  const chips=[S.drive?`🚐 ${S.drive}`:(d.km?`🚐 ${d.km} km · ${d.drive}`:d.drive),d.wx?`${T("keskm.","avg")} ${d.wx}`:"",chipText(`[data-wx="${i}"]`),chipText(`[data-fc="${i}"]`)].filter(Boolean);
+  const chips=[S.drive||(d.km?`${d.km} km · ${d.drive}`:d.drive),d.wx?`${T("keskm.","avg")} ${d.wx}`:"",chipText(`[data-wx="${i}"]`),chipText(`[data-fc="${i}"]`)].filter(Boolean);
   const tl=Array.isArray(S.timeline)&&S.timeline.length?`<h3>${T("Ajakava","Schedule")}</h3><ol class="tl">${S.timeline.map(([t,x])=>`<li><b>${esc(t||"")}</b><span>${esc(x||"")}</span></li>`).join("")}</ol>`:"";
   sumPanel.innerHTML=`<div class="sp-head"><div style="min-width:0">
       <div class="sp-date">${esc(d.d)}<small>${esc(d.w)} · ${T("päev","day")} ${i+1}</small></div>
@@ -545,16 +584,16 @@ function renderSummary(i){
       ${modeSw}
       <div class="chips">${chips.map((c,k)=>`<span class="chip${k===1?" w":""}">${esc(c)}</span>`).join("")}</div>
       ${S.summary?`<p>${esc(S.summary)}</p>`:""}
-      ${!has?`<p class="note">${d.note?"💡 "+esc(d.note)+"<br>":""}${T("Päeva kokkuvõte lisandub hiljem.","Day summary coming later.")}</p>`:(d.note&&!slow?`<p class="note">💡 ${esc(d.note)}</p>`:"")}
+      ${!has?`<p class="note">${d.note?esc(d.note)+"<br>":""}${T("Päeva kokkuvõte lisandub hiljem.","Day summary coming later.")}</p>`:(d.note&&!slow?`<p class="note">${esc(d.note)}</p>`:"")}
       ${tl}
       ${list(S.highlights)?`<h3>${T("Tipphetked","Highlights")}</h3>${list(S.highlights)}`:""}
-      ${S.kids?`<div class="sp-box"><b>${T("👧 Lapsega","👧 With the child")}</b><br>${esc(S.kids)}</div>`:""}
-      ${S.food?`<div class="sp-box food"><b>${T("🍽️ Toit","🍽️ Food")}</b><br>${esc(S.food)}</div>`:""}
+      ${S.kids?`<div class="sp-box"><b>${T("Lapsega","With the child")}</b><br>${esc(S.kids)}</div>`:""}
+      ${S.food?`<div class="sp-box food"><b>${T("Toit","Food")}</b><br>${esc(S.food)}</div>`:""}
       ${list(S.tips)?`<h3>${T("Nõuanded","Tips")}</h3>${list(S.tips)}`:""}
       ${d.acts.length?`<h3>${slow?T("Aktiivse päeva tegevused","Active-day activities"):T("Tegevused","Activities")}</h3><ul>${d.acts.map(a=>`<li>${link(a[0],a[1])}</li>`).join("")}</ul>`:""}
-      ${n?`<h3>${T("Öö","Night")}</h3><div class="sp-night">🌙 ${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span></div>
+      ${n?`<h3>${T("Öö","Night")}</h3><div class="sp-night">${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span></div>
         ${d.nightNote?`<p class="note">${esc(d.nightNote)}</p>`:""}
-        <p><a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${n[2]},${n[3]}" target="_blank" rel="noopener">${T("🧭 Navigeeri","🧭 Navigate")}</a></p>`:""}
+        <p><a class="btn primary" href="https://www.google.com/maps/dir/?api=1&destination=${n[2]},${n[3]}" target="_blank" rel="noopener">${T("Navigeeri","Navigate")}</a></p>`:""}
     </div>
     <div class="sp-foot"><button type="button" data-step="-1" ${i===0?"disabled":""}>${T("‹ Eelmine päev","‹ Previous day")}</button><button type="button" data-step="1" ${i===DAYS.length-1?"disabled":""}>${T("Järgmine päev ›","Next day ›")}</button></div>`;
 }
@@ -592,10 +631,10 @@ DAYS.forEach((d,i)=>{
   const el=document.createElement("article"); el.className="day"+(d.d===TODAY?" today":""); el.tabIndex=0; el.id="day-"+d.d;
   el.innerHTML=`<div class="dhead"><div class="date">${esc(d.d)}<small>${esc(d.w)} · ${T("päev","day")} ${i+1}</small>${d.d===TODAY?`<span class="pill">${T("Täna","Today")}</span>`:""}</div></div>
    <div class="route">${esc(d.route)}</div>
-   <div class="chips">${d.km?`<span class="chip">🚐 ${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w" title="${T("Novembri keskmine","November average")}">${T("keskm.","avg")} ${esc(d.wx)}</span><span class="chip now" data-wx="${i}" hidden></span><span class="chip fc" data-fc="${i}" hidden></span></div>
+   <div class="chips">${d.km?`<span class="chip">${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w" title="${T("Novembri keskmine","November average")}">${T("keskm.","avg")} ${esc(d.wx)}</span><span class="chip now" data-wx="${i}" hidden></span><span class="chip fc" data-fc="${i}" hidden></span></div>
    <ul class="acts">${d.acts.map(a=>`<li>${link(a[0],a[1])}</li>`).join("")}</ul>
-   ${d.note?`<div class="note">💡 ${esc(d.note)}</div>`:""}
-   ${n?`<div class="night">🌙 ${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${d.nightNote?`<span class="note" style="margin:0">${esc(d.nightNote)}</span>`:""}</div>`:""}`;
+   ${d.note?`<div class="note">${esc(d.note)}</div>`:""}
+   ${n?`<div class="night">${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${d.nightNote?`<span class="note" style="margin:0">${esc(d.nightNote)}</span>`:""}</div>`:""}`;
   el.addEventListener("click",e=>{if(e.target.tagName!=="A") selectDay(i,{open:!autoSelect});});
   el.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target===el) selectDay(i,{open:true});});
   daysEl.appendChild(el);
@@ -617,7 +656,7 @@ DAYS.forEach((d,i)=>{
       const c=r.current, now=document.querySelector(`[data-wx="${i}"]`);
       if(c&&now){now.textContent=`${T("praegu","now")} ${Math.round(c.temperature_2m)}° ${WMO(c.weather_code)} · ${Math.round(c.wind_speed_10m)} km/h`; now.hidden=false;}
       const [dd,mm]=d.d.split("."), iso=`2026-${mm}-${dd}`, k=r.daily?r.daily.time.indexOf(iso):-1, fc=document.querySelector(`[data-fc="${i}"]`);
-      if(k>=0&&fc){const D=r.daily; fc.textContent=`${T("prognoos","forecast")} ${Math.round(D.temperature_2m_max[k])}° / ${Math.round(D.temperature_2m_min[k])}° ${WMO(D.weather_code[k])} · 💧${D.precipitation_probability_max[k]??"–"}%`; fc.hidden=false;}
+      if(k>=0&&fc){const D=r.daily; fc.textContent=`${T("prognoos","forecast")} ${Math.round(D.temperature_2m_max[k])}° / ${Math.round(D.temperature_2m_min[k])}° ${WMO(D.weather_code[k])} · ${D.precipitation_probability_max[k]??"–"}%`; fc.hidden=false;}
     });
   }).catch(()=>{});
 })();
@@ -685,7 +724,7 @@ document.getElementById("dueList").innerHTML=DUE.map(d=>`<li><b>${esc(d[0])}</b>
       <div class="place">${esc(n[0])}</div>
       <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${same?` <span class="note" style="margin:0">${T("· sama koht mis eelmisel ööl","· same place as the previous night")}</span>`:""}
       ${d.nightNote?`<div class="note">${esc(d.nightNote)}</div>`:""}
-      <div class="acts2"><a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${n[2]},${n[3]}" target="_blank" rel="noopener">${T("🧭 Navigeeri","🧭 Navigate")}</a>${n[1]?`<a class="btn" href="${esc(n[1])}" target="_blank" rel="noopener">${T("🔗 Koduleht","🔗 Website")}</a>`:""}<a class="btn" href="#" data-goto="${esc(d.d)}">${T("🗺️ Päev kaardil","🗺️ Day on map")}</a></div>`;
+      <div class="acts2"><a class="btn primary" href="https://www.google.com/maps/dir/?api=1&destination=${n[2]},${n[3]}" target="_blank" rel="noopener">${T("Navigeeri","Navigate")}</a>${n[1]?`<a class="btn" href="${esc(n[1])}" target="_blank" rel="noopener">${T("Koduleht","Website")}</a>`:""}<a class="btn" href="#" data-goto="${esc(d.d)}">${T("Päev kaardil","Day on map")}</a></div>`;
     box.appendChild(c);
   });
   box.addEventListener("click",e=>{const g=e.target.closest("[data-goto]"); if(!g) return; e.preventDefault();
@@ -757,7 +796,7 @@ function upd(){const inputs=[...root.querySelectorAll("input")]; const n=inputs.
   cnt.textContent=(document.documentElement.lang==="en"?"Packed ":"Pakitud ")+`${n} / ${inputs.length}`;}
 P.forEach(([title,items],g)=>{
   const card=document.createElement("div"); card.className="card check";
-  card.innerHTML=`<h3>${e(title)}</h3><ul></ul>`; const ul=card.querySelector("ul");
+  card.innerHTML=`<h3>${e(String(title).replace(/^\s*(?:[\u{1F1E6}-\u{1F1FF}]{2}|[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}])\uFE0F?\s*/u,""))}</h3><ul></ul>`; const ul=card.querySelector("ul");
   items.forEach((raw,i)=>{ const it=norm(raw,g,i), k=it.k, id="pk"+k.replace(/[^A-Za-z0-9_-]/g,"_"), checked=on(k,it.def);
     const li=document.createElement("li");
     li.innerHTML=`<input type="checkbox" id="${id}" data-def="${it.def?1:0}" data-k="${e(k)}" ${checked?"checked":""}><label for="${id}">${e(it.t)}</label>${it.note?`<span class="note pk-note">${e(it.note)}</span>`:""}`;
