@@ -133,11 +133,24 @@ html[lang="en"] [data-lang="et"],html[lang="et"] [data-lang="en"]{display:none!i
 .leaflet-popup-content-wrapper{border:1px solid var(--line);border-radius:16px}
 .leaflet-popup-tip{border:1px solid var(--line)}
 .leaflet-container{background:#000;font:inherit}
+.leaflet-tile-pane{filter:invert(100%) hue-rotate(180deg) saturate(.45) brightness(.92) contrast(1.05)}
 .leaflet-container a{color:var(--blue)}
 .leaflet-bar{border:1px solid var(--line)!important;border-radius:16px;overflow:hidden;box-shadow:none}
 .leaflet-bar a,.leaflet-bar a:hover{background:#000;color:var(--text);border-bottom:1px solid var(--line);width:32px;height:32px;line-height:32px}
-.leaflet-control-attribution{background:rgba(0,0,0,.75)!important;color:var(--muted)!important;font-size:11px!important}
+.leaflet-control-attribution{background:rgba(0,0,0,.75)!important;color:var(--muted)!important;font-size:11px!important;max-width:70%}
 .leaflet-control-attribution a{color:var(--blue)!important}
+#routeMap{width:100%;height:60vh;min-height:280px;background:#000;z-index:0;isolation:isolate}
+#routeMap .leaflet-bar a{width:44px;height:44px;line-height:44px;font-size:20px}
+.pin.route{width:100%;height:32px;min-width:0;padding:0 5px;font-size:13px;box-sizing:border-box}
+.route-ctl{display:flex;gap:6px}
+.route-ctl button{height:44px;padding:0 14px;border-radius:999px;border:1px solid #536471;background:#000;color:var(--text);font-weight:700;font-size:14px;cursor:pointer;box-shadow:none}
+.route-ctl button:hover{background:#16181c}
+.route-stop{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);padding:12px 16px;cursor:pointer;color:inherit;font:inherit}
+.route-stop:hover{background:var(--hover)}
+.route-num{flex:none;min-width:28px;height:28px;padding:0 6px;border-radius:999px;background:#1d9bf0;color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px;box-sizing:border-box}
+@media (min-width:901px){
+  #routeMap{height:calc(100vh - 200px);min-height:480px}
+}
 .pop img{display:block;width:240px;max-width:100%;height:150px;object-fit:cover;border-radius:16px;margin:8px 0 2px;background:var(--line)}
 .pop .cap{font-size:12px;color:var(--muted)}
 .pin{width:26px;height:26px;border-radius:999px;display:grid;place-items:center;color:#fff;font:700 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;border:2px solid #000;box-shadow:0 0 0 1px rgba(231,233,234,.35)}
@@ -196,6 +209,7 @@ footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(
 </header>
 <nav class="tabs" role="tablist">
   <button role="tab" aria-selected="true" data-tab="kava" data-en="Plan">Kava</button>
+  <button role="tab" aria-selected="false" data-tab="kaart" data-en="Map">Kaart</button>
   <button role="tab" aria-selected="false" data-tab="oo" data-en="Nights">Ööbimine</button>
   <button role="tab" aria-selected="false" data-tab="bron" data-en="Bookings">Broneeringud</button>
   <button role="tab" aria-selected="false" data-tab="lennud" data-en="Flights">Lennud</button>
@@ -213,6 +227,11 @@ footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(
         <aside id="sumPanel" role="dialog" aria-modal="false" aria-labelledby="spTitle" aria-hidden="true"></aside>
       </div>
     </div>
+  </section>
+  <section class="panel" id="kaart">
+    <div id="routeMap" role="region" aria-label="Ööbimiste kaart / Overnight map"></div>
+    <p class="note" id="routeNote"><span data-en="Overnight stops in day order, numbers on the blue markers. The line joins the South Island stops, including the drive back to Christchurch on 29.11. Melbourne is separate — use the button in the corner of the map.">Ööbimised päevade järjekorras, numbrid sinisel märgil. Joon ühendab Lõunasaare peatused, ka tagasisõit Christchurchi 29.11. Melbourne on eraldi — nupp kaardi nurgas.</span> <span id="routeStatus"></span></p>
+    <div class="card"><h3 data-en="Overnight stops">Ööbimised</h3><div id="routeStops"></div></div>
   </section>
   <section class="panel" id="oo"><div id="nights" class="nights"></div>
     <p class="note" data-en="Opens Google Maps navigation straight to the campsite.">Avab Google Mapsi navigeerimise otse ööbimiskohta.</p></section>
@@ -524,15 +543,16 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===b.dataset.tab));
   const nav=b.parentElement; if(nav) nav.scrollTo({left:Math.max(0,b.offsetLeft-12),behavior:"smooth"});
   if(b.dataset.tab==="kava") setTimeout(()=>map.invalidateSize(),50);
+  if(b.dataset.tab==="kaart") setTimeout(showRouteMap,30);
 });
 
 // stats
 let cum=0; const km=DAYS.reduce((a,d)=>a+d.km,0);
 document.getElementById("kmTotal").textContent=km.toLocaleString(LOC);
 
-// map
+// map (OSM tiles, no key; .leaflet-tile-pane CSS darkens them. CARTO dark_all now requires a key.)
 const map=L.map("map",{scrollWheelZoom:true});
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap © CARTO",subdomains:"abcd"}).addTo(map);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
 const pin=(c,t,fg)=>L.divIcon({className:"",html:`<div class="pin" style="background:${c};color:${fg||"#fff"}">${t}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
 const dayLayers=[]; const nzPts=[]; const routePts=[];
 DAYS.forEach((d,i)=>{
@@ -736,6 +756,134 @@ document.getElementById("dueList").innerHTML=DUE.map(d=>`<li><b>${esc(d[0])}</b>
   document.querySelectorAll('nav.tabs button[data-tab="oo"]').forEach(b=>b.addEventListener("click",()=>{
     const tn=document.getElementById("night-"+TODAY); if(tn) setTimeout(()=>tn.scrollIntoView({behavior:"smooth",block:"center"}),60);}));
 })();
+
+// Kaart tab: overnight stops from DAYS (coords already on each night)
+let routeMap=null;
+function showRouteMap(){
+  if(!routeMap) initRouteMap();
+  else routeMap.invalidateSize();
+}
+function initRouteMap(){
+  const el=document.getElementById("routeMap"); if(!el||typeof L==="undefined") return;
+  const PLACE={
+    "Novotel Christchurch Airport":["Christchurch","Christchurch"],
+    "Lakes Edge Holiday Park":["Lake Tekapo","Lake Tekapo"],
+    "Glentanner Park Centre":["Aoraki / Mt Cook","Aoraki / Mt Cook"],
+    "Wanaka Lakeview Holiday Park":["Wanaka","Wanaka"],
+    "Te Anau Lakeview Kiwi Holiday Park":["Te Anau","Te Anau"],
+    "Fox Glacier Top 10":["Fox Glacier","Fox Glacier"],
+    "Okarito Campground":["Okarito","Okarito"],
+    "Shining Star Beachfront":["Hokitika","Hokitika"],
+    "Hanmer Springs Top 10":["Hanmer Springs","Hanmer Springs"],
+    "Kaikōura Top 10":["Kaikōura","Kaikōura"],
+    "Quest Williamstown / Novotel St Kilda":["Melbourne","Melbourne"]
+  };
+  const groups=[];
+  DAYS.forEach(d=>{
+    const n=d.night; if(!n||n[2]==null||n[3]==null) return;
+    const key=n[5]||n[0];
+    const prev=groups[groups.length-1];
+    if(prev&&prev.key===key){prev.days.push(d); return;}
+    groups.push({key,days:[d],night:n});
+  });
+  groups.forEach((g,i)=>g.n=i+1);
+  const span=days=>{
+    if(days.length===1) return days[0].d;
+    const a=days[0].d, b=days[days.length-1].d;
+    const [ad,am]=a.split("."), [bd,bm]=b.split(".");
+    return am===bm?`${Number(ad)}.–${Number(bd)}.${bm}`:`${a}–${b}`;
+  };
+  const placeOf=key=>{const p=PLACE[key]; return p?T(p[0],p[1]):key;};
+  const byKey=new Map();
+  groups.forEach(g=>{if(!byKey.has(g.key)) byKey.set(g.key,[]); byKey.get(g.key).push(g);});
+  const popupFor=list=>{
+    const n=list[0].night, st=BADGE[n[4]]||BADGE.todo;
+    const dates=list.map(g=>span(g.days)).join(" · ");
+    const nums=list.map(g=>g.n).join("·");
+    const notes=[...new Set(list.flatMap(g=>g.days.map(d=>d.nightNote).filter(Boolean)))];
+    return `<div class="pop"><b>${esc(nums)} · ${esc(dates)}</b><br>${esc(placeOf(list[0].key))}<br>${link(n[0],n[1])}<br><span class="badge ${st[0]}">${st[1]}</span>${notes.map(t=>`<div class="note">${esc(t)}</div>`).join("")}</div>`;
+  };
+  routeMap=L.map(el,{scrollWheelZoom:true,touchZoom:true,dragging:true,zoomControl:true});
+  // CARTO dark_all now answers with an API-key watermark, so both maps use OSM tiles (darkened in CSS).
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:19,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(routeMap);
+  const markers=new Map();
+  byKey.forEach((list,key)=>{
+    const n=list[0].night, label=list.map(g=>g.n).join("·");
+    const w=Math.max(32, 16+label.length*8);
+    const icon=L.divIcon({className:"",html:`<div class="pin route" style="background:#1d9bf0">${esc(label)}</div>`,iconSize:[w,32],iconAnchor:[w/2,16]});
+    const m=L.marker([n[2],n[3]],{icon,keyboard:true,title:placeOf(key)}).bindPopup(popupFor(list),{maxWidth:280,autoPanPadding:[48,48]}).addTo(routeMap);
+    markers.set(key,m);
+  });
+  const nz=groups.filter(g=>g.night[3]>160);
+  const nzLL=nz.map(g=>[g.night[2],g.night[3]]);
+  const driveLL=nzLL.length?nzLL.concat([nzLL[0]]):[];
+  const driving=driveLL.length?L.polyline(driveLL,{color:"#1d9bf0",weight:4,opacity:.92,interactive:false}).addTo(routeMap):null;
+  const mel=groups.filter(g=>g.night[3]<=160);
+  const nzBounds=nzLL.length?L.latLngBounds(nzLL):null;
+  let allowRefit=true, fitting=false;
+  const fitNZ=()=>{
+    if(!nzBounds) return;
+    const b=L.latLngBounds(nzBounds.getSouthWest(),nzBounds.getNorthEast());
+    if(driving){const rb=driving.getBounds(); if(rb.isValid()) b.extend(rb);}
+    fitting=true;
+    routeMap.fitBounds(b,{padding:[36,36],animate:false});
+    fitting=false;
+  };
+  fitNZ();
+  routeMap.on("dragstart zoomstart",()=>{if(!fitting) allowRefit=false;});
+  const calm=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function focusKey(key){
+    const m=markers.get(key); if(!m) return;
+    const ll=m.getLatLng(), melb=ll.lng<=160, z=melb?11:Math.max(routeMap.getZoom(),8);
+    let opened=false;
+    const open=()=>{if(opened) return; opened=true; m.openPopup();};
+    if(calm()){routeMap.setView(ll,z); open(); return;}
+    routeMap.once("moveend",open);
+    routeMap.flyTo(ll,z,{duration:.6});
+    setTimeout(open,900);
+  }
+  const Ctl=L.Control.extend({options:{position:"topright"},onAdd(){
+    const d=L.DomUtil.create("div","route-ctl");
+    const mk=(fit,label)=>{const b=L.DomUtil.create("button","",d); b.type="button"; b.dataset.fit=fit; b.textContent=label; return b;};
+    mk("nz",T("Lõunasaar","South Island"));
+    if(mel.length) mk("mel","Melbourne");
+    L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
+    d.addEventListener("click",e=>{
+      const b=e.target.closest("button"); if(!b) return;
+      if(b.dataset.fit==="nz") fitNZ();
+      else if(mel[0]) focusKey(mel[0].key);
+    });
+    return d;
+  }});
+  new Ctl().addTo(routeMap);
+  const box=document.getElementById("routeStops");
+  if(box) groups.forEach(g=>{
+    const n=g.night, st=BADGE[n[4]]||BADGE.todo;
+    const btn=document.createElement("button"); btn.type="button"; btn.className="route-stop";
+    btn.innerHTML=`<span class="route-num">${g.n}</span><span><b>${esc(span(g.days))}</b> · ${esc(placeOf(g.key))}<br>${esc(n[0])} <span class="badge ${st[0]}">${st[1]}</span></span>`;
+    btn.addEventListener("click",()=>focusKey(g.key));
+    box.appendChild(btn);
+  });
+  const status=document.getElementById("routeStatus");
+  if(status) status.textContent=T("Teejoont täpsustan…","Refining the road line…");
+  if(driving&&driveLL.length>1){
+    const coord=driveLL.map(p=>p[1]+","+p[0]).join(";");
+    const url="https://router.project-osrm.org/route/v1/driving/"+coord+"?overview=simplified&geometries=geojson";
+    const ctrl=typeof AbortSignal!=="undefined"&&AbortSignal.timeout?AbortSignal.timeout(12000):undefined;
+    fetch(url,ctrl?{signal:ctrl}:{}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{
+      const geom=data&&data.code==="Ok"&&data.routes&&data.routes[0]&&data.routes[0].geometry;
+      if(!geom||!geom.coordinates||geom.coordinates.length<2) throw new Error("no route");
+      driving.setLatLngs(geom.coordinates.map(([lng,lat])=>[lat,lng]));
+      if(status) status.textContent=T("Sõidujoon järgib teid (OSRM).","The driving line follows the roads (OSRM).");
+      if(allowRefit) fitNZ();
+    }).catch(()=>{if(status) status.textContent=T("Teejoon on sirge – marsruuter ei vastanud.","The line is straight – the router did not respond.");});
+  }
+  setTimeout(()=>{routeMap.invalidateSize(); if(allowRefit) fitNZ();},80);
+  window.addEventListener("resize",()=>{if(routeMap&&document.getElementById("kaart").classList.contains("active")) routeMap.invalidateSize();});
+}
 </script>
 <script>
 // packing list (localStorage, guarded)
