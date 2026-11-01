@@ -188,6 +188,15 @@ footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(
   nav.tabs button{padding:14px 14px 12px}
   nav.tabs button[aria-selected="true"]::after{left:12px;right:12px}
 }
+/* Wide screens: use the full window. The day list grows a little, then the map takes the rest. */
+@media (min-width:1081px){
+  body{max-width:none;border-left:0;border-right:0}
+  .split{grid-template-columns:clamp(400px,30vw,560px) minmax(0,1fr)}
+  #sumPanel{width:clamp(340px,42%,600px)}
+  .card > p,.card > .note,.panel > .note,footer{max-width:72ch}
+  .card > ul > li,.check li{padding-right:max(16px,calc(100% - 16px - 72ch))}
+  #bronTable td:nth-child(6),#flightTable td:nth-child(4),#paidTable td:nth-child(3){max-width:72ch}
+}
 </style>
 </head>
 <body>
