@@ -258,7 +258,7 @@ footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(
     <p class="note" data-en="Ticks are saved in this browser.">Linnukesed salvestuvad selles brauseris.</p></div></section>
   <section class="panel" id="pakk">
     <div data-lang="et"><div class="card"><h3>Mis temperatuurideks valmistuda</h3>
-      <p class="note" style="margin-top:0">Novembri pikaajalised keskmised (päev / öö). Planeeri vahemikku <b>0…25 °C</b>: sisemaal on hommikud 0–5 °C, päeval 15–18 °C, Melbourne'is ~22 °C. Ilm muutub mägedes tunniga.</p>
+      <p class="note" style="margin-top:0">Novembri pikaajalised keskmised (päev / öö), pakkimiseks – see ei ole päevade prognoos. Planeeri vahemikku <b>0…25 °C</b>: sisemaal on hommikud 0–5 °C, päeval 15–18 °C, Melbourne'is ~22 °C. Ilm muutub mägedes tunniga.</p>
       <div class="tablewrap"><table class="pk-temp">
         <tr><th>Koht</th><th>Kuupäevad</th><th class="num">Päev °C</th><th class="num">Öö °C</th><th>Vihm, tuul, erisused</th></tr>
         <tr><td>Melbourne</td><td>14.11, 29.–30.11</td><td class="num">22</td><td class="num">13</td><td>~64 mm kuus; päevad kõiguvad 15 ja 30+ °C vahel</td></tr>
@@ -292,7 +292,7 @@ footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(
       <li><b>Jalatsid:</b> veekindlad matkajalatsid + sandaalid/plätud; enne lendu tallad puhtaks (biokontroll).</li>
     </ul></div>
     </div><div data-lang="en"><div class="card"><h3>What temperatures to prepare for</h3>
-      <p class="note" style="margin-top:0">Long-term November averages (day / night). Plan for a range of <b>0…25 °C</b>: inland mornings 0–5 °C, days 15–18 °C, Melbourne ~22 °C. Mountain weather changes within an hour.</p>
+      <p class="note" style="margin-top:0">Long-term November averages (day / night), for packing – this is not the day-by-day forecast. Plan for a range of <b>0…25 °C</b>: inland mornings 0–5 °C, days 15–18 °C, Melbourne ~22 °C. Mountain weather changes within an hour.</p>
       <div class="tablewrap"><table class="pk-temp">
         <tr><th>Place</th><th>Dates</th><th class="num">Day °C</th><th class="num">Night °C</th><th>Rain, wind, notes</th></tr>
         <tr><td>Melbourne</td><td>14.11, 29.–30.11</td><td class="num">22</td><td class="num">13</td><td>~64 mm a month; days swing between 15 and 30+ °C</td></tr>
@@ -367,7 +367,7 @@ footer{color:var(--muted);font-size:13px;text-align:left;padding:16px 16px calc(
   </section>
 </main>
 <div id="sumBackdrop" aria-hidden="true"></div>
-<footer data-en="Weather figures are long-term averages, not a forecast · Coordinates approximate · Map © OpenStreetMap">Ilmaandmed on pikaajalised keskmised, mitte prognoos · Koordinaadid ligikaudsed · Kaart © OpenStreetMap</footer>
+<footer data-en="Day weather is an Open-Meteo forecast, not a long-term average · The packing table is the November average · Coordinates approximate · Map © OpenStreetMap">Päevade ilm on Open-Meteo prognoos, mitte pikaajaline keskmine · Pakkimise tabel on novembri keskmine · Koordinaadid ligikaudsed · Kaart © OpenStreetMap</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -420,11 +420,11 @@ const DAYS = [
  {d:"17.11",w:"T",route:"→ Aoraki / Mt Cook",km:105,drive:"1 h 15",wx:"15° / 3° 🌧",
   acts:[["Hooker Valley Track (10 km, ~3 h)",gm("Hooker Valley Track"),-43.6957,170.0941]],
   note:"Parkla täitub – ole kohal enne 9:00",
-  night:["Glentanner Park Centre","https://www.mackenzienz.com/visit/glentanner-park-centre",-43.912,170.122,"ok"]},
+  night:["Glentanner Park Centre","https://www.mackenzienz.com/visit/glentanner-park-centre",-43.9141,170.1234,"ok"]},
  {d:"18.11",w:"K",route:"Aoraki / Mt Cook",km:50,drive:"–",wx:"15° / 3° 🌧",
   acts:[["Red Tarns Track (~2 h)",gm("Red Tarns Track Mount Cook"),-43.735,170.096],["Tasman Lake vaatepunkt",gm("Tasman Glacier View Track"),-43.689,170.16]],
   note:"Ilmapuhvri päev",
-  night:["Glentanner Park Centre","https://www.mackenzienz.com/visit/glentanner-park-centre",-43.912,170.122,"ok"]},
+  night:["Glentanner Park Centre","https://www.mackenzienz.com/visit/glentanner-park-centre",-43.9141,170.1234,"ok"]},
  {d:"19.11",w:"N",route:"→ Wanaka (Lindis Pass)",km:210,drive:"3 h",wx:"19° / 6° ☀️",
   acts:[["Lindis Pass",gm("Lindis Pass"),-44.588,169.643],["Mt Iron ringrada (1,5 h)",gm("Mt Iron Track Wanaka"),-44.697,169.164]],
   night:["Wanaka Lakeview Holiday Park","https://hampshireholidayparks.co.nz/?p=4223",-44.697,169.127,"todo"]},
@@ -604,7 +604,7 @@ function renderSummary(i){
   const d=DAYS[i], slow=sumMode==="slow"&&SLOW[d.d], S=slow?Object.assign({},SUMMARY[d.d]||{},SLOW[d.d]):(SUMMARY[d.d]||{}), n=d.night, has=Object.keys(S).length>0;
   const modeSw=SLOW[d.d]?`<div class="sp-mode" role="group" aria-label="${T("Päeva tempo","Day pace")}"><button type="button" data-mode="active" aria-pressed="${!slow}">${T("Aktiivne päev","Active day")}</button><button type="button" data-mode="slow" aria-pressed="${!!slow}">${T("Aeglane / väsinud","Slow / tired")}</button></div>`:"";
   const list=a=>Array.isArray(a)&&a.length?`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"";
-  const chips=[S.drive||(d.km?`${d.km} km · ${d.drive}`:d.drive),d.wx?`${T("keskm.","avg")} ${d.wx}`:"",chipText(`[data-wx="${i}"]`),chipText(`[data-fc="${i}"]`)].filter(Boolean);
+  const chips=[S.drive||(d.km?`${d.km} km · ${d.drive}`:d.drive),chipText(`[data-wx="${i}"]`),chipText(`[data-fc="${i}"]`)].filter(Boolean);
   const tl=Array.isArray(S.timeline)&&S.timeline.length?`<h3>${T("Ajakava","Schedule")}</h3><ol class="tl">${S.timeline.map(([t,x])=>`<li><b>${esc(t||"")}</b><span>${esc(x||"")}</span></li>`).join("")}</ol>`:"";
   sumPanel.innerHTML=`<div class="sp-head"><div style="min-width:0">
       <div class="sp-date">${esc(d.d)}<small>${esc(d.w)} · ${T("päev","day")} ${i+1}</small></div>
@@ -661,7 +661,7 @@ DAYS.forEach((d,i)=>{
   const el=document.createElement("article"); el.className="day"+(d.d===TODAY?" today":""); el.tabIndex=0; el.id="day-"+d.d;
   el.innerHTML=`<div class="dhead"><div class="date">${esc(d.d)}<small>${esc(d.w)} · ${T("päev","day")} ${i+1}</small>${d.d===TODAY?`<span class="pill">${T("Täna","Today")}</span>`:""}</div></div>
    <div class="route">${esc(d.route)}</div>
-   <div class="chips">${d.km?`<span class="chip">${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip w" title="${T("Novembri keskmine","November average")}">${T("keskm.","avg")} ${esc(d.wx)}</span><span class="chip now" data-wx="${i}" hidden></span><span class="chip fc" data-fc="${i}" hidden></span></div>
+   <div class="chips">${d.km?`<span class="chip">${d.km} km · ${esc(d.drive)}</span><span class="chip">Σ ${cum} km</span>`:`<span class="chip">${esc(d.drive)}</span>`}<span class="chip now" data-wx="${i}" hidden></span><span class="chip fc" data-fc="${i}">${T("Ilm laadib…","Loading weather…")}</span></div>
    <ul class="acts">${d.acts.map(a=>`<li>${link(a[0],a[1])}</li>`).join("")}</ul>
    ${d.note?`<div class="note">${esc(d.note)}</div>`:""}
    ${n?`<div class="night">${link(n[0],n[1])} <span class="badge ${BADGE[n[4]][0]}">${BADGE[n[4]][1]}</span>${d.nightNote?`<span class="note" style="margin:0">${esc(d.nightNote)}</span>`:""}</div>`:""}`;
@@ -670,25 +670,79 @@ DAYS.forEach((d,i)=>{
   daysEl.appendChild(el);
 });
 
-// live weather (Open-Meteo, no key)
+// live forecast (Open-Meteo model, no key). Not the November climate averages.
 (function(){
   const WMO=c=>c===0?"☀️":c<=2?"🌤":c===3?"☁️":c<=48?"🌫":c<=57?"🌦":c<=67?"🌧":c<=77?"🌨":c<=82?"🌧":c<=86?"🌨":"⛈";
-  const pts=DAYS.map(d=>d.night?[d.night[2],d.night[3]]:(d.acts.length?[d.acts[d.acts.length-1][2],d.acts[d.acts.length-1][3]]:null));
-  const keys=[],idx=[];
-  pts.forEach((p,i)=>{if(!p){idx.push(-1);return;} const k=p[0].toFixed(2)+","+p[1].toFixed(2); let j=keys.indexOf(k); if(j<0){keys.push(k);j=keys.length-1;} idx.push(j);});
-  if(!keys.length) return;
-  const lat=keys.map(k=>k.split(",")[0]).join(","), lon=keys.map(k=>k.split(",")[1]).join(",");
-  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&timezone=auto&forecast_days=16`;
-  fetch(url).then(r=>r.ok?r.json():Promise.reject(r.status)).then(res=>{
-    const arr=Array.isArray(res)?res:[res];
-    DAYS.forEach((d,i)=>{
-      const r=arr[idx[i]]; if(!r) return;
-      const c=r.current, now=document.querySelector(`[data-wx="${i}"]`);
-      if(c&&now){now.textContent=`${T("praegu","now")} ${Math.round(c.temperature_2m)}° ${WMO(c.weather_code)} · ${Math.round(c.wind_speed_10m)} km/h`; now.hidden=false;}
-      const [dd,mm]=d.d.split("."), iso=`2026-${mm}-${dd}`, k=r.daily?r.daily.time.indexOf(iso):-1, fc=document.querySelector(`[data-fc="${i}"]`);
-      if(k>=0&&fc){const D=r.daily; fc.textContent=`${T("prognoos","forecast")} ${Math.round(D.temperature_2m_max[k])}° / ${Math.round(D.temperature_2m_min[k])}° ${WMO(D.weather_code[k])} · ${D.precipitation_probability_max[k]??"–"}%`; fc.hidden=false;}
+  const NZ="Pacific/Auckland", MEL="Australia/Melbourne";
+  // Daytime place when the night stop is a different city (late flight or a day trip).
+  const AT={
+    "14.11":[-37.7841,144.9515,MEL,"Melbourne"],
+    "22.11":[-44.6695,167.924,NZ,"Milford Sound"],
+    "29.11":[-43.4894,172.532,NZ,"Christchurch"],
+    "30.11":[-37.8624,144.9055,MEL,"Melbourne"]
+  };
+  const PLACE={
+    "15.11":"Tekapo","16.11":"Tekapo","17.11":"Glentanner","18.11":"Glentanner",
+    "19.11":"Wanaka","20.11":"Wanaka","21.11":"Te Anau","23.11":"Wanaka",
+    "24.11":"Fox Glacier","25.11":"Okarito","26.11":"Hokitika","27.11":"Hanmer Springs","28.11":"Kaikōura"
+  };
+  const point=d=>{
+    if(AT[d.d]) return AT[d.d];
+    const p=d.night?[d.night[2],d.night[3]]:d.acts.length?[d.acts[d.acts.length-1][2],d.acts[d.acts.length-1][3]]:null;
+    if(!p) return null;
+    return [p[0],p[1],p[1]>160?NZ:MEL,PLACE[d.d]||""];
+  };
+  const isoOf=d=>{const [dd,mm]=d.d.split("."); return `2026-${mm.padStart(2,"0")}-${dd.padStart(2,"0")}`;};
+  const leadOf=(from,to)=>{
+    const a=from.split("-").map(Number), b=to.split("-").map(Number);
+    return Math.round((Date.UTC(b[0],b[1]-1,b[2])-Date.UTC(a[0],a[1]-1,a[2]))/86400000);
+  };
+  const wxNote=document.createElement("p");
+  wxNote.className="note"; wxNote.style.padding="10px 16px 0";
+  wxNote.textContent=T(
+    "Ilm on Open-Meteo prognoos selle päeva koha ja kuupäeva järgi (värskendub lehte avades). Järgmised 7 päeva on tavaline prognoos. 8.–16. päeva oma on esialgne hinnang: temperatuur ja tuul, mitte täpne sajuhulk. Kaugemale mudel ei ulatu.",
+    "Weather is the Open-Meteo forecast for that day’s place and date (refreshed when you open the page). The next 7 days are a normal forecast. Days 8–16 are a tentative estimate: temperature and wind, not an exact rainfall total. Beyond that the model does not reach yet."
+  );
+  daysEl.prepend(wxNote);
+  const jobs=new Map();
+  const rows=DAYS.map(d=>{
+    const p=point(d); if(!p) return null;
+    const key=p[2]+"|"+p[0].toFixed(4)+","+p[1].toFixed(4);
+    if(!jobs.has(key)) jobs.set(key,{lat:p[0],lon:p[1],tz:p[2]});
+    return {key,name:p[3]};
+  });
+  const byTz=new Map();
+  jobs.forEach((v,k)=>{if(!byTz.has(v.tz)) byTz.set(v.tz,[]); byTz.get(v.tz).push([k,v]);});
+  const fail=()=>{document.querySelectorAll("[data-fc]").forEach(el=>{el.textContent=T("Prognoosi ei saanud laadida","Could not load the forecast");});};
+  const pending=[...byTz].map(([tz,list])=>{
+    const lat=list.map(([,v])=>v.lat).join(","), lon=list.map(([,v])=>v.lon).join(",");
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,wind_speed_10m_max,precipitation_probability_max&timezone=${encodeURIComponent(tz)}&forecast_days=16&wind_speed_unit=kmh`;
+    return fetch(url,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(res=>{
+      const arr=Array.isArray(res)?res:[res];
+      list.forEach(([k],i)=>{jobs.get(k).res=arr[i];});
     });
-  }).catch(()=>{});
+  });
+  Promise.all(pending).then(()=>{
+    DAYS.forEach((d,i)=>{
+      const row=rows[i], fc=document.querySelector(`[data-fc="${i}"]`); if(!row||!fc) return;
+      const r=jobs.get(row.key).res, D=r&&r.daily, iso=isoOf(d);
+      const k=D&&D.time?D.time.indexOf(iso):-1;
+      const missing=!D||k<0||D.temperature_2m_max[k]==null||D.temperature_2m_min[k]==null;
+      if(missing){fc.textContent=`${row.name?row.name+" · ":""}${T("prognoos pole veel saadaval","forecast not yet available")}`; return;}
+      const lead=leadOf(D.time[0], iso), soft=lead>=8;
+      const hi=Math.round(D.temperature_2m_max[k]), lo=Math.round(D.temperature_2m_min[k]);
+      const wind=D.wind_speed_10m_max?Math.round(D.wind_speed_10m_max[k]):null;
+      const icon=WMO(D.weather_code[k]);
+      const rain=D.precipitation_probability_max?D.precipitation_probability_max[k]:null;
+      const bits=[`${hi}° / ${lo}° ${icon}`];
+      if(!soft&&rain!=null) bits.push(T(`vihma võimalus ${rain}%`,`rain chance ${rain}%`));
+      if(wind!=null) bits.push(T(`tuul kuni ${wind} km/h`,`wind up to ${wind} km/h`));
+      fc.textContent=`${row.name?row.name+" · ":""}${soft?T("esialgne prognoos","tentative forecast"):T("prognoos","forecast")} ${bits.join(" · ")}`;
+      const nowEl=document.querySelector(`[data-wx="${i}"]`), c=r.current;
+      if(lead===0&&c&&nowEl){nowEl.textContent=`${T("praegu","now")} ${Math.round(c.temperature_2m)}° ${WMO(c.weather_code)} · ${Math.round(c.wind_speed_10m)} km/h`; nowEl.hidden=false;}
+    });
+    if(typeof sumIdx==="number"&&sumIdx>=0&&sumPanel.classList.contains("open")) renderSummary(sumIdx);
+  }).catch(fail);
 })();
 
 
