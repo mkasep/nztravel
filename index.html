@@ -716,7 +716,7 @@ DAYS.forEach((d,i)=>{
   const fail=()=>{document.querySelectorAll("[data-fc]").forEach(el=>{el.textContent=T("Prognoosi ei saanud laadida","Could not load the forecast");});};
   const pending=[...byTz].map(([tz,list])=>{
     const lat=list.map(([,v])=>v.lat).join(","), lon=list.map(([,v])=>v.lon).join(",");
-    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,wind_speed_10m_max,precipitation_probability_max&timezone=${encodeURIComponent(tz)}&forecast_days=16&wind_speed_unit=kmh`;
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,wind_speed_10m_max,precipitation_probability_max&timezone=${encodeURIComponent(tz)}&forecast_days=16&wind_speed_unit=ms`;
     return fetch(url,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(res=>{
       const arr=Array.isArray(res)?res:[res];
       list.forEach(([k],i)=>{jobs.get(k).res=arr[i];});
@@ -731,15 +731,16 @@ DAYS.forEach((d,i)=>{
       if(missing){fc.textContent=`${row.name?row.name+" · ":""}${T("prognoos pole veel saadaval","forecast not yet available")}`; return;}
       const lead=leadOf(D.time[0], iso), soft=lead>=8;
       const hi=Math.round(D.temperature_2m_max[k]), lo=Math.round(D.temperature_2m_min[k]);
-      const wind=D.wind_speed_10m_max?Math.round(D.wind_speed_10m_max[k]):null;
+      const windN=v=>v==null?null:(Math.round(v*10)/10).toLocaleString(LOC,{minimumFractionDigits:1,maximumFractionDigits:1});
+      const wind=windN(D.wind_speed_10m_max?D.wind_speed_10m_max[k]:null);
       const icon=WMO(D.weather_code[k]);
       const rain=D.precipitation_probability_max?D.precipitation_probability_max[k]:null;
       const bits=[`${hi}° / ${lo}° ${icon}`];
       if(!soft&&rain!=null) bits.push(T(`vihma võimalus ${rain}%`,`rain chance ${rain}%`));
-      if(wind!=null) bits.push(T(`tuul kuni ${wind} km/h`,`wind up to ${wind} km/h`));
+      if(wind!=null) bits.push(T(`tuul kuni ${wind} m/s`,`wind up to ${wind} m/s`));
       fc.textContent=`${row.name?row.name+" · ":""}${soft?T("esialgne prognoos","tentative forecast"):T("prognoos","forecast")} ${bits.join(" · ")}`;
       const nowEl=document.querySelector(`[data-wx="${i}"]`), c=r.current;
-      if(lead===0&&c&&nowEl){nowEl.textContent=`${T("praegu","now")} ${Math.round(c.temperature_2m)}° ${WMO(c.weather_code)} · ${Math.round(c.wind_speed_10m)} km/h`; nowEl.hidden=false;}
+      if(lead===0&&c&&nowEl){nowEl.textContent=`${T("praegu","now")} ${Math.round(c.temperature_2m)}° ${WMO(c.weather_code)} · ${windN(c.wind_speed_10m)} m/s`; nowEl.hidden=false;}
     });
     if(typeof sumIdx==="number"&&sumIdx>=0&&sumPanel.classList.contains("open")) renderSummary(sumIdx);
   }).catch(fail);
