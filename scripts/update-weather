@@ -36,8 +36,8 @@ PLACES = [
     ("18.11", "Wanaka", -44.697, 169.127, NZ),
     ("19.11", "Wanaka", -44.697, 169.127, NZ),
     ("20.11", "Te Anau", -45.42, 167.711, NZ),
-    ("21.11", "Kingston", -45.334, 168.716, NZ),
-    ("22.11", "Queenstown", -45.031, 168.663, NZ),
+    ("21.11", "Wanaka", -44.697, 169.127, NZ),
+    ("22.11", "Wanaka / Roys Peak", -44.697, 169.074, NZ),
     ("23.11", "Matukituki / Rob Roy", -44.50, 168.74, NZ),
     ("24.11", "Haast / Fox Glacier", -43.463, 170.019, NZ),
     ("25.11", "Franz Josef / Hokitika", -42.956, 171.016, NZ),
@@ -52,7 +52,7 @@ BLOCKS = (("am", 0, 12), ("mid", 12, 15), ("aft", 15, 18), ("eve", 18, 24))
 
 def get(url: str) -> dict:
     req = urllib.request.Request(url, headers={"User-Agent": "nztravel-update-weather"})
-    with urllib.request.urlopen(req, timeout=60) as res:
+    with urllib.request.urlopen(req, timeout=120) as res:
         return json.load(res)
 
 
